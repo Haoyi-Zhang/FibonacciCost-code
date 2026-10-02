@@ -1,0 +1,27 @@
+{
+  "cases_with_old_or_new_minimum_tie": 6084,
+  "cpu_seconds": 4.231974991,
+  "fractional_grid_denominator": 4,
+  "fractional_grid_max_absolute_value": "2",
+  "fractional_support_states": 153,
+  "fractional_transition_counts": {
+    "N->N": 512,
+    "N->P": 512,
+    "P->N": 352,
+    "P->P": 473
+  },
+  "fractional_transition_inequality_checks": 1849,
+  "peak_rss_kib": 93608,
+  "rational_first_stage_checks": 22500,
+  "rational_reuse_changed": 29826,
+  "rational_reuse_exactly_unchanged": 10269,
+  "rational_reuse_feasible_but_not_exact": 13689,
+  "rational_reuse_graphs": 495,
+  "rational_reuse_old_new_cost_pairs": 40095,
+  "rational_two_stage_checks": 337500,
+  "rational_unit_decrease_inputs": 1500,
+  "scope": "exact Fraction finite grids; symbolic real-valued proofs remain in proofs/results.tex; candidate integer implementation is not imported",
+  "status": "passed",
+  "wall_seconds": 4.2324418889998014,
+  "workers": 1
+}

@@ -1,0 +1,145 @@
+{
+  "status": "passed",
+  "documents": [
+    {
+      "document": "main.pdf",
+      "expected_page_count": 2,
+      "page_count": 2,
+      "expected_bibliography_items": 10,
+      "bibliography_items": 10,
+      "bytes": 276427,
+      "sha256": "15a2088e3df842231e9117e48a52fd7a9075a596198fdb3bb89afbcd6deba706",
+      "font_count": 18,
+      "font_types": [
+        "Type 1"
+      ],
+      "all_fonts_embedded": true,
+      "type3_fonts": 0,
+      "pages": [
+        {
+          "page": 1,
+          "width_pt": 612.0,
+          "height_pt": 792.0,
+          "word_boxes_outside_page": []
+        },
+        {
+          "page": 2,
+          "width_pt": 612.0,
+          "height_pt": 792.0,
+          "word_boxes_outside_page": []
+        }
+      ],
+      "visual_pages_inspected": [
+        1,
+        2
+      ],
+      "visual_review_dpi": 200,
+      "validation_passed": true
+    },
+    {
+      "document": "supplement.pdf",
+      "expected_page_count": 10,
+      "page_count": 10,
+      "expected_bibliography_items": 65,
+      "bibliography_items": 65,
+      "bytes": 295677,
+      "sha256": "683bfae044bf3b1af8d08ff6d336068ac89844faf7f678e296c6902ba8c599da",
+      "font_count": 14,
+      "font_types": [
+        "Type 1"
+      ],
+      "all_fonts_embedded": true,
+      "type3_fonts": 0,
+      "pages": [
+        {
+          "page": 1,
+          "width_pt": 612.0,
+          "height_pt": 792.0,
+          "word_boxes_outside_page": []
+        },
+        {
+          "page": 2,
+          "width_pt": 612.0,
+          "height_pt": 792.0,
+          "word_boxes_outside_page": []
+        },
+        {
+          "page": 3,
+          "width_pt": 612.0,
+          "height_pt": 792.0,
+          "word_boxes_outside_page": []
+        },
+        {
+          "page": 4,
+          "width_pt": 612.0,
+          "height_pt": 792.0,
+          "word_boxes_outside_page": []
+        },
+        {
+          "page": 5,
+          "width_pt": 612.0,
+          "height_pt": 792.0,
+          "word_boxes_outside_page": []
+        },
+        {
+          "page": 6,
+          "width_pt": 612.0,
+          "height_pt": 792.0,
+          "word_boxes_outside_page": []
+        },
+        {
+          "page": 7,
+          "width_pt": 612.0,
+          "height_pt": 792.0,
+          "word_boxes_outside_page": []
+        },
+        {
+          "page": 8,
+          "width_pt": 612.0,
+          "height_pt": 792.0,
+          "word_boxes_outside_page": []
+        },
+        {
+          "page": 9,
+          "width_pt": 612.0,
+          "height_pt": 792.0,
+          "word_boxes_outside_page": []
+        },
+        {
+          "page": 10,
+          "width_pt": 612.0,
+          "height_pt": 792.0,
+          "word_boxes_outside_page": []
+        }
+      ],
+      "visual_pages_inspected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "visual_review_dpi": 160,
+      "validation_passed": true
+    }
+  ],
+  "style_files": {
+    "aaai2027.sty": {
+      "sha256": "391bce82815bf698b8e382dd3ae7e30c75d7ab46df140cb295b1266016bc8623",
+      "byte_identical_to_supplied_template": true
+    },
+    "aaai2027.bst": {
+      "sha256": "5db7765ba99de5c1e4686f9b3940a0add9c5e702f2164514462bec130ccb6e3c",
+      "byte_identical_to_supplied_template": true
+    }
+  },
+  "supplement_limit_bytes": 20971520,
+  "supplement_under_limit": true,
+  "visual_review": "All final pages were rendered after the final build and inspected for overlap, clipping, broken glyphs, legibility, and display overflow.",
+  "source_override_scan": "passed by paper/build.py"
+}

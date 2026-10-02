@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "deterministic_timed_searches_compared": 900,
+  "deterministic_fields": "input bytes decoded as JSON; graphs/dimensions; costs; all work counters; search status/cost/expansions/generated; scalar factors",
+  "excluded_from_equality": [
+    "cpu_seconds",
+    "peak_rss_kib",
+    "seconds",
+    "setup_seconds",
+    "total_seconds",
+    "update_seconds",
+    "wall_seconds"
+  ],
+  "timing_comparison": [
+    {
+      "family": "independent",
+      "primary_exact_over_full": 0.7634799069379029,
+      "reproduction_exact_over_full": 0.7108590329068005
+    },
+    {
+      "family": "coupled",
+      "primary_exact_over_full": 0.8546107599787137,
+      "reproduction_exact_over_full": 0.8095329554541696
+    },
+    {
+      "family": "relay",
+      "primary_exact_over_full": 1.0293251888687782,
+      "reproduction_exact_over_full": 1.0815074048037403
+    },
+    {
+      "family": "all",
+      "primary_exact_over_full": 0.8480904396032385,
+      "reproduction_exact_over_full": 0.807597218658279
+    }
+  ],
+  "child_cpu_seconds": 23.962249999999997,
+  "parent_cpu_seconds": 0.03666890700000003,
+  "wall_seconds": 20.14909092200014,
+  "child_peak_rss_kib": 97824,
+  "workers": 1
+}

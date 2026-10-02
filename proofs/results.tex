@@ -1,0 +1,212 @@
+\section{Model and the Invariant Being Preserved}
+A concrete task is a finite labelled transition system with goal set $G$ and one finite nonnegative cost $c(a)$ for every action label $a\in A$. An abstraction map $\alpha_i$ preserves every labelled transition and maps concrete goals to abstract goals. We fix these maps, their finite graphs $D_i=(V_i,E_i,G_i)$, and one order $1,\ldots,m$. Every abstract vertex can reach a goal. Costs may change only between searches. This is an explicit finite-distance model: the implementation rejects unreachable abstract vertices rather than assigning a meaning to arithmetic with infinity.
+
+For an incoming residual $r_i\geq0$, let $h_i$ be its exact abstract goal distance and put
+\[
+ s_i(a)=\max\bigl(\{0\}\cup\{h_i(u)-h_i(v):(u,v,a)\in E_i\}\bigr),
+ \]
+\[ r_{i+1}=r_i-s_i.
+\]
+An absent label and a label with only self-loops receive saturation zero. Several transitions may share one label; their costs are not independently mutable. Throughout, label--pattern incidence counts only non-self-loop transitions. We use nonnegative saturation, whereas the general SCP literature also permits negative allocations \citep{scp2020}.
+
+\textbf{Lemma 1 (standard saturation invariant).} For each stage, $0\leq s_i\leq r_i$, and $h_i=\operatorname{dist}_{s_i}$. Consequently, the projected sum $H(s)=\sum_i h_i(\alpha_i(s))$ is consistent and admissible for the concrete costs $c$.
+
+\textit{Proof.} Exact distances satisfy $h_i(u)\leq r_i(a)+h_i(v)$, and are zero at goals. Taking all differences for a label gives $s_i\leq r_i$. Every edge also satisfies $h_i(u)\leq s_i(a)+h_i(v)$. Telescoping any goal path therefore gives $h_i\leq\operatorname{dist}_{s_i}$. Since $s_i\leq r_i$, monotonicity of path costs gives $\operatorname{dist}_{s_i}\leq\operatorname{dist}_{r_i}=h_i$. Thus equality holds. Subtraction preserves a nonnegative residual and implies $\sum_i s_i(a)\leq c(a)$. Project a concrete edge, sum its abstract consistency inequalities, and obtain $H(s)\leq c(a)+H(t)$. Concrete goals have value zero, so telescoping proves admissibility. This is existing cost-partitioning reasoning, included to state precisely what the update maintains. $\square$
+
+\section{Arbitrarily Long Propagation on an Incidence Path}
+Use Boolean variables $x_1,\ldots,x_m$, goal all ones, and their singleton projections in that order. For $j=0,\ldots,m$, action $a_j$ sets $x_j,x_{j+1}$ to one when those indices lie in $1,\ldots,m$; it has no precondition. Thus $a_0$ only affects $x_1$ and $a_m$ only affects $x_m$. Costs are $c(a_0)=1$ and $c(a_j)=2$ otherwise. In pattern $i$, advancing labels are $a_{i-1},a_i$; all other transitions are self-loops. An advancing label also has a self-loop at the goal. Each action affects at most two patterns, and the incidence graph is a path.
+
+\textbf{Proposition 2 (path relay).} Replacing $c(a_0)$ by $1-\delta$, for $0<\delta\leq1$, changes every non-goal table entry from 1 to $1+(-1)^i\delta$. After stage $i$, the only residual difference is on label $a_i$, and equals $(-1)^{i+1}\delta$.
+
+\textit{Proof.} Before old stage $i$, label $a_{i-1}$ has residual 1 and fresh label $a_i$ has residual 2. The first statement is immediate for $i=1$. If the only incoming difference is $(-1)^i\delta$ on $a_{i-1}$, its new cost is in $[0,2]$. The non-goal distance, the minimum of these two advancing costs, is therefore $1+(-1)^i\delta$, even at the boundary tie when it equals 2. Both advancing labels receive this saturation. Label $a_{i-1}$ is exhausted in both partitions; the new residual of $a_i$ is $1-(-1)^i\delta$. All other allocations are zero, so their incoming differences remain zero. This proves the induction and the original-cost formula. $\square$
+
+The original changed label has non-self-loop transitions in only the first pattern. Sparsity of its original incidence, maximum degree two, and residual support of size one therefore do not bound the number of changed tables independently of $m$. Any representation that explicitly overwrites every changed table cell needs at least $m$ writes on this family. This statement concerns materialized cells, not lazy formulas, shared symbolic representations, or all possible update algorithms.
+
+\section{Amplification with Bounded Incidence}
+For a Boolean singleton pattern with nonempty advancing set $B$, all other labels are self-loops. Its non-goal distance is $\min_{a\in B}r(a)$, and that value is saturated on every advancing label. Let $T_B$ denote the resulting residual map.
+
+\textbf{Lemma 3 (one-table perturbation bound).} For all finite nonnegative residuals, $\lVert T_B(r')-T_B(r)\rVert_\infty\leq2\lVert r'-r\rVert_\infty$.
+
+\textit{Proof.} Write $\eta=\lVert r'-r\rVert_\infty$ and $m=\min_{a\in B}r(a)$, $m'=\min_{a\in B}r'(a)$. The minimum is 1-Lipschitz, so $|m'-m|\leq\eta$. Outside $B$, $T_B$ leaves a coordinate unchanged. Inside $B$, the output difference is $(r'(a)-r(a))-(m'-m)$, whose absolute value is at most $2\eta$. $\square$
+
+The factor-two bound permits growth under composition but does not identify when it can begin. The unit perturbation has a sharper two-stage bound.
+
+\textbf{Lemma 4 (tight amplification onset).} Suppose $r'$ is obtained from $r$ by decreasing one coordinate by one. For any two nonempty advancing sets $B,C$ for which the residuals are defined,
+\[
+ \lVert T_C(T_B(r'))-T_C(T_B(r))\rVert_\infty\leq1.
+\]
+There is a three-table sequence whose final residual difference has magnitude 2.
+
+\textit{Proof.} Let $\mu=\min_B r'-\min_B r\in[-1,0]$. If the changed coordinate is in $B$, the first output differences are $-1-\mu$ there, $-\mu$ on the other labels of $B$, and zero elsewhere; otherwise they are simply $-1$ and zero. Thus all first-stage differences lie in an interval $[\ell,u]$ of width one that contains zero. At the second table, the change $\nu$ of the selected minimum lies in $[\ell,u]$. Selected output differences have the form $d-\nu\in[-1,1]$; unselected ones already lie in $[-1,1]$. The construction below with $k=0$ attains magnitude 2 after its third table. $\square$
+
+For a vector $d$ of support at most two, put $M(d)=\lVert d\rVert_\infty$ and $L(d)=\lVert d\rVert_1$. Call $d$ type P if its nonzero coordinates have one sign (a singleton and the zero vector count as P), and type N if it has one positive and one negative coordinate.
+
+\textbf{Lemma 5 (one-step support-two bounds).} Let $d=r'-r$ and $e=T_B(r')-T_B(r)$, and suppose both have support at most two. Then
+\[
+\begin{array}{c@{\;}c|cc}
+\text{input}&\text{output}&M(e)&L(e)\\ \hline
+\mathrm P&\mathrm P&\leq M(d)&\leq2M(d)\\
+\mathrm P&\mathrm N&\leq M(d)&\leq L(d)\\
+\mathrm N&\mathrm P&\leq L(d)&\leq L(d)+M(d)\\
+\mathrm N&\mathrm N&\leq L(d)&\leq L(d)
+\end{array}
+\]
+
+\textit{Proof.} Write $\mu=\min_B r'-\min_B r$. The elementary minimum inequality gives
+\[
+ \min_{a\in B}d(a)\leq\mu\leq\max_{a\in B}d(a),
+\]
+\[
+ e(a)=\begin{cases}d(a)-\mu,&a\in B,\\ d(a),&a\notin B.\end{cases}
+\]
+The statement is invariant under exchanging $r,r'$ and permuting labels. For type P, assume the at most two nonzero entries are nonnegative. Then $\mu\geq0$ whenever a changed entry is selected. No output magnitude exceeds $M(d)$. If both signs survive, positive mass can only decrease; the single negative magnitude is no larger than the decrease of a selected entry attaining at least $\mu$. Hence $L(e)\leq L(d)$. If one sign survives, support two gives $L(e)\leq2M(d)$.
+
+For type N, write the entries as $a$ and $-b$, with $a,b>0$. Since $-b\leq\mu\leq a$, every possible output entry---$a$, $-b$, $a-\mu$, $-b-\mu$, or $-\mu$---has magnitude at most $a+b=L(d)$. If both signs survive, their separation is at most $a+b$: when $\mu>0$, selecting the negative endpoint forces the positive endpoint to be selected as well, and symmetrically for $\mu<0$. Thus $L(e)\leq L(d)$. If only one sign survives, at most one entry can be derived from an old nonzero endpoint with magnitude at most $L(d)$; a second survivor can only be a shifted zero of magnitude $|\mu|\leq M(d)$. Therefore $L(e)\leq L(d)+M(d)$. $\square$
+
+Write $F_1=F_2=1$ for the Fibonacci numbers.
+
+\textbf{Theorem 6 (tight support-two envelope).} Start from two nonnegative residual vectors that differ by decreasing one coordinate by one. Apply any sequence of nonempty two-state minimum-subtraction maps, and assume the residual-difference support is at most two after every map. After $2k+1$ maps,
+\[
+ \lVert d_{2k+1}\rVert_\infty\leq F_{k+2}\qquad(k\geq0).
+\]
+In particular, after $2k+3$ maps the bound is $F_{k+3}$.
+
+\textit{Proof.} We prove the following stronger parity invariants. After $2k+1$ maps,
+\[
+\begin{array}{c|ccc}
+& M&L&L+M\\ \hline
+\mathrm P&\leq F_{k+2}&\leq F_{k+3}&--\\
+\mathrm N&\leq F_{k+2}&2L\leq F_{k+4}&2(L+M)\leq F_{k+5},
+\end{array}\tag{1}
+\]
+and after $2k+2$ maps,
+\[
+\begin{array}{c|ccc}
+& M&L&L+M\\ \hline
+\mathrm P&2M\leq F_{k+4}&2L\leq F_{k+5}&--\\
+\mathrm N&--&L\leq F_{k+3}&L+M\leq F_{k+4}.
+\end{array}\tag{2}
+\]
+After the first map, $M\leq1$. A type-P output has $L\leq2$, while a type-N output lies on opposite sides of zero in an interval of width one, so $L\leq1$; these facts establish (1) for $k=0$.
+
+Apply Lemma 5. From odd P to even P,
+$2M'\leq2F_{k+2}\leq F_{k+4}$ and
+$2L'\leq4F_{k+2}\leq F_{k+5}$; odd P to even N gives
+$L'\leq F_{k+3}$ and $L'+M'\leq F_{k+3}+F_{k+2}=F_{k+4}$.
+From odd N to even P, $2M'\leq2L\leq F_{k+4}$ and
+$2L'\leq2(L+M)\leq F_{k+5}$; odd N to even N gives
+$L'\leq L\leq F_{k+4}/2\leq F_{k+3}$ and
+$L'+M'\leq2L\leq F_{k+4}$. This proves (2).
+
+Conversely, even P to odd P gives
+$M'\leq F_{k+4}/2\leq F_{k+3}$ and $L'\leq F_{k+4}$; even P to odd N gives
+$M'\leq F_{k+3}$,
+$2L'\leq F_{k+5}$, and
+$2(L'+M')\leq F_{k+5}+F_{k+4}=F_{k+6}$.
+Even N to odd P gives $M'\leq F_{k+3}$ and $L'\leq F_{k+4}$; even N to odd N gives
+$M'\leq F_{k+3}$,
+$2L'\leq2F_{k+3}\leq F_{k+5}$, and
+$2(L'+M')\leq4F_{k+3}\leq F_{k+6}$.
+The scalar inequalities used here follow from the Fibonacci recurrence, monotonicity, $F_{n+1}\leq2F_n$, and $4F_n\leq F_{n+3}$ for $n\geq2$. Thus (1) and (2) hold by induction, and the P/N bounds in (1) both imply the theorem. $\square$
+
+\textbf{Theorem 7 (tight bounded-incidence cascade).} For every integer $k\geq0$ there is a fixed Boolean task with $2k+3$ singleton patterns and $2k+4$ labels. One external cost change from 1 to 0 changes every table and attains the support-two upper bound: it leaves exactly one final residual difference of value $F_{k+3}$. Every action affects at most three variables, every pattern has at most three advancing actions, and every intermediate residual-difference vector has support at most two. The largest original cost is exactly $F_{k+3}$.
+
+\textit{Construction and proof.} For each pattern, a concrete action sets its mentioned Boolean variable to one and is a self-loop elsewhere. Begin with labels $d,x,y$, original costs $(1,1,2)$, and advancing set $\{d,x,y\}$. Decreasing only $d$ to zero changes the table value by $-1$ and leaves
+\[
+ r(x)=0,\quad \Delta r(x)=1,\qquad
+ r(y)=1,\quad \Delta r(y)=1,
+\]
+where $r$ is the old residual and $\Delta r=r'-r$.
+
+Maintain an active pair $x,y$ satisfying
+\[
+\begin{aligned}
+ r(x)&=0,& \Delta r(x)&=A,\\
+ r(y)&=A,& \Delta r(y)&=B,\qquad A\geq B>0.
+\end{aligned}
+\]
+Introduce fresh labels $z,w$ with original costs $A$ and $2A+B$, and append advancing sets
+\[
+ \{x,z\},\qquad \{y,z,w\}.
+\]
+At the first table, the old and new minima are $0$ and $A$. Its value changes by $+A$; the only remaining differences are $\Delta r(y)=B$ and $\Delta r(z)=-A$. At the second table, the old and new minima are $A$ and $0$. Its value changes by $-A$ and leaves
+\[
+\begin{aligned}
+ r(y)&=0,& \Delta r(y)&=A+B,\\
+ r(w)&=A+B,& \Delta r(w)&=A.
+\end{aligned}
+\]
+Hence two tables map the carry pair $(A,B)$ to $(A+B,A)$. Starting from $(1,1)$, after $k$ iterations the pair is $(F_{k+2},F_{k+1})$.
+
+For cleanup, introduce one fresh label $z$ of cost $A$ and append $\{x,z\}$ and $\{y,z\}$. Their value changes are $+A$ and $-A$, and the final residual has only $\Delta r(y)=A+B=F_{k+3}$. Thus all $1+2k+2$ tables change and support never exceeds two. Each fresh $z$ occurs twice. A carry label occurs in the table that creates it and in at most the next two tables; hence action incidence is at most three, while each advancing set has size at most three. There are $3+2k+1$ labels. In iteration $j$, the new $w$ costs $2F_{j+2}+F_{j+1}=F_{j+4}$, so the largest cost is the last such value, or 2 when $k=0$, namely $F_{k+3}$. Theorem 6 proves that no support-two cascade can exceed this final magnitude at the same odd depth. $\square$
+
+All labels have goal self-loops in both the relay and amplifier. Their maximum edge difference is therefore already nonnegative. These witnesses also apply when the saturation formula is not explicitly clipped at zero. The general update implementation is nevertheless restricted to nonnegative residuals and allocations.
+
+The amplification is exponential in the number of patterns, but it measures absolute residual sensitivity rather than optimal plan cost, search expansions, or running time. Its input bit width is $\lceil\log_2(F_{k+3}+1)\rceil=\Theta(k)$. Explicit table materialization and self-loop expansion can still dominate representation size; no upper bound is asserted once difference support can exceed two or for abstractions with more than two states.
+
+\section{An Exact Reuse Boundary and Ordered Repair}
+Let $h=\operatorname{dist}_r$ be an old exact, finite table in a fixed graph, $s$ its nonnegative saturation, and $q\geq0$ the new incoming residual. Define the new tight-edge graph by
+\[
+ E_q^h=\{(u,v,a)\in E:h(u)=q(a)+h(v)\}.
+\]
+
+\textbf{Proposition 8 (exact reuse).} The entire old table remains exact under $q$ if and only if (i) $q(a)\geq s(a)$ for every label and (ii) every vertex reaches a goal through $E_q^h$.
+
+\textit{Proof.} If $h=\operatorname{dist}_q$, every edge's consistency inequality gives $h(u)-h(v)\leq q(a)$; nonnegativity gives (i). Since the graph is finite and costs are nonnegative, any optimal goal walk has a cycle-free optimal goal path after removing cycles, possibly retaining zero-cost alternatives. Each edge on such a path is tight for exact goal distances: a strict inequality would give a cheaper suffix and contradict optimality. Thus (ii) holds. Conversely, (i) makes $h$ consistent under $q$, so telescoping every goal path gives $h\leq\operatorname{dist}_q$. A tight goal path from any vertex telescopes to a path costing exactly $h$ there, giving $\operatorname{dist}_q\leq h$. Goals have $h=0$, including the zero-length path case. $\square$
+
+This is the standard shortest-path lower-bound and witness-path optimality criterion in shared-label form. The new tight graph is important: a formerly non-tight edge may become an essential alternative. It is not sufficient to preserve one old shortest-path tree. Label feasibility alone preserves admissibility of $h$ under $q$, but does not imply equality with the new exact table.
+
+\textbf{Ordered repair.} Start with residual $c'$. At each pattern, retain $(h_i,s_i)$ exactly when Proposition 8 holds; otherwise compute exact distances with reverse Dijkstra and recompute saturation by scanning all labelled transitions. In either case, save the current incoming residual with the table and subtract the corresponding saturation from it before advancing.
+
+\textit{Correctness.} Inductively assume the incoming residual equals that of a full fresh SCP computation. A retained table is exact under that same residual by Proposition 8, so its saturation, a deterministic function of the table and graph, also equals the fresh saturation. A rebuilt table equals it by exact shortest-path computation. Subtraction therefore gives the same next residual. The induction proves equality of all distances, allocations, and offered residuals with full rebuilding, and Lemma 1 gives consistency and admissibility. This induction also covers a sequence of cost updates, provided each uses the latest valid cache and the same graph/order. It does not authorize arbitrary externally supplied tables or changes of abstraction identity.
+
+The predicate skips every unchanged distance table; if it fails, at least one distance cell actually differs. This is minimal table rebuilding among schemes that retain whole old tables or rebuild whole tables. It is not an optimality statement about edge scans or time. A dynamic shortest-path algorithm could replace reverse Dijkstra inside a rebuilding stage without removing the need to propagate new residuals \citep{incremental2020}.
+
+\textbf{Implementation shortcuts and cost.} Labels appearing only on self-loops have no distance effect and saturation zero. If all other incoming costs are unchanged, retain immediately. Otherwise, test feasibility only on changed effective labels; unchanged ones were already feasible. If these changes are all decreases, monotonicity gives $\operatorname{dist}_q\leq h$, and feasibility gives the reverse inequality, so retain without a reachability scan. In the remaining case, reverse breadth-first traversal of the new tight edges from all goals checks reachability. Apart from labelled-cost comparisons, this takes $O(|V|+|E|)$ time and $O(|V|)$ auxiliary space. Full rebuilding uses reverse Dijkstra and one saturation scan. Scanning and rebuilding work are both counted in the timing experiment.
+
+\section{Negative Controls and Admissible Baselines}
+\textbf{A zero-tight component.} With goal 2 and edges $0\xrightarrow{a}1$, $1\xrightarrow{a}0$, $0\xrightarrow{b}2$, old costs $(a,b)=(0,1)$ give $h=(1,1,0)$ and $s=(0,1)$. New costs $(0,2)$ satisfy label feasibility. Each non-goal vertex still has a tight outgoing edge on the zero cycle, so local Bellman equality accepts this wrong table. The actual new distances are $(2,2,0)$. Reverse tight-goal reachability rejects it. Thus zero-cost SCCs cannot be treated as goal witnesses.
+
+\textbf{A newly tight alternative.} Two parallel goal edges labelled $a,b$, with old costs $(1,2)$ and new costs $(2,1)$, keep distance 1 while the unique tight label switches. The exact predicate accepts this table. A second control starts from $(1,1)$ and increases one label to 2; the surviving tie also preserves exactness.
+
+\textbf{Feasible new allocation, stale value.} For the three-pattern path with old costs $(1,2,2,2)$, decrease the first cost to zero. New non-goal table values are $(0,2,0)$, and the new allocations sum within $(0,2,2,2)$. At concrete state $(1,0,0)$, the first value is zero. Using the new second table and stale third table gives $0+2+1=3$, yet $a_2$ reaches the goal for 2. Allocation feasibility cannot be detached from the tables it certifies. This is a negative control, not an admissible baseline.
+
+\textbf{Global scaling.} Let $H$ be the old SCP sum and define
+\[
+ \gamma=\min\left(\{1\}\cup\{c'(a)/c(a):c(a)>0\}\right).
+\]
+Then $0\leq\gamma\leq1$ and $\gamma c(a)\leq c'(a)$ for every label; an old zero cost imposes no constraint because $c'\geq0$. Scaling the old consistency inequality yields $\gamma H(s)\leq c'(a)+\gamma H(t)$ and goals remain zero. Hence $\gamma H$ is admissible and consistent. The implementation uses exact rational $\gamma=n/d$ and A* keys $dg+nH$, not floating-point rounding. With all old costs zero the displayed set contains only 1, which is still valid.
+
+\textbf{Recomputed maximum.} Compute each abstraction's exact distances using the full $c'$, then take their maximum. Each projected distance is consistent under $c'$, and taking the maximum preserves that inequality and the goal value. This avoids cost-allocation propagation but can lose additive guidance. The baseline is not an optimal cost partition.
+
+\textbf{Support-only forward repair.} Retain a table only when all its incoming non-self-loop label costs match its saved offer; rebuild it otherwise, and always forward the residual. The same ordered induction proves equality to a fresh rebuild. It is a deliberately cheaper, less selective exact baseline, not the unsound policy of considering only the original changed action.
+
+\section{Reproducible Checks and Timing Protocol}
+All experimental inputs are algorithmically generated for this study. No IPC dataset, demonstration, external planner code, training, model API, private data, or hardware service was used. Python 3.13.5 and its standard library were used for the retained run. The production implementation uses arbitrary-precision integer distances and residuals and deliberately rejects floats, Boolean values as costs, negative costs, wrong cost-vector length, and unreachable abstract vertices. The proofs permit finite nonnegative real costs. A separate checker uses exact \texttt{Fraction} arithmetic, imports none of the candidate implementation, and exercises fractional ties and reuse certificates without floating-point tolerances; it is regression evidence, not a proof for all reals.
+
+\textbf{Independent oracle.} The oracle performs synchronous Bellman--Ford relaxations, at most $|V|-1$ rounds, with its own label-major saturation loop and ordered residual subtraction. It does not import the candidate's Dijkstra, saturation, or reuse functions. It shares the input graph representation and synthetic task generators; it is an independent algorithmic cross-check, not an independent reviewer or a formal proof assistant.
+
+For three vertices, labels $a,b$, and designated goal 2, enumerate all $3^6=729$ total deterministic labelled graphs. Exactly 495 have all vertices goal-reachable. For every such graph and all $9\times9$ old/new vectors in $\{0,1,2\}^2$, check candidate distances against the oracle and the reuse answer against exact table equality: 40,095 pairs. The check also recomputes distances under saturated costs. For Lemma~3 it exhaustively checks all 98,415 pairs of four-label vectors in $\{0,1,2\}^4$ across all 15 nonempty advancing sets. A separate seeded campaign (seed 91827) creates 120 ordered five-graph sequences, each graph with six states and five labels; a reset-to-goal label ensures finite distances. Twelve arbitrary new integer vectors per sequence give 1,440 sequential mixed updates checked against the independent partition oracle.
+
+For independent and coupled coordinate tasks with $q=2$, seeds 0--3, and sparse/mixed changes, enumerate every concrete state and transition. An independent concrete Bellman--Ford calculation checks 384 state/update combinations for admissibility, and all their edges for consistency. Path witnesses include $m=1,2,3,4,7,8,31,32,127$; the original pilot additionally included $m=16,64$. The amplification checker uses $k=0,1,2,3,4,8,16,32,64$, checking all tables and allocations against the oracle, incidence and support bounds, exact Fibonacci values, and every nonzero table change. At $k=64$, the final difference and largest input cost are $F_{67}=44{,}945{,}570{,}212{,}853$, requiring 46 bits. A separate integer check covers 172,800 four-label inputs, changed coordinates, and pairs of advancing sets for Lemma 4. An independent arithmetic checker verifies all four inequalities of Lemma 5 on 1,849 support-two transitions, the scalar induction inequalities through $k=1000$, and a deliberately over-approximating reachable envelope through 17 tables; its odd-depth maxima are exactly $1,2,3,5,8,13,21,34,55$.
+
+The exact-rational checker adds three implementation-independent grids. Half-integer costs give 1,500 unit-decrease inputs, 22,500 first-stage checks and 337,500 two-stage checks, including 6,084 cases with an old or new minimum tie. A quarter-grid interval over-approximation checks the four P/N inequalities on 153 support-two states and 1,849 transitions. Finally, all 495 goal-reachable three-state/two-label deterministic graphs are crossed with all old/new vectors in $\{0,\tfrac12,1\}^2$, yielding 40,095 exact-reuse comparisons; 13,689 have a feasible old saturation but a changed table, directly exercising the negative direction of Proposition~8. These finite checks attack the constructions, boundary cases and proof arithmetic; the preceding symbolic proofs establish the arbitrary-size and real-valued claims.
+
+\textbf{Frozen timing families.} Independent tasks have four coordinates in $\{0,\ldots,q-1\}$ with $q\in\{6,8,10\}$. For each coordinate there are two identical saturating increment actions, with costs $b,b+4$ where $b$ is sampled uniformly from $\{2,3,4,5\}$, and one decrement of cost 1. Patterns are singletons. Coupled tasks have five coordinates, $q\in\{3,4,5\}$, the same individual actions, plus five cyclic adjacent-pair increment actions with costs sampled from $\{2,\ldots,7\}$. Their patterns are the five adjacent pairs. The four task seeds are 0--3, and each task's pattern order is shuffled once and frozen. Coordinate maps clamp to the legal domain, have no preconditions, and exactly commute with projection. Goals set all coordinates to $q-1$ and starts are all zero.
+
+The update generator has seed $10000+\text{task seed}$, independent of task construction. It uniformly chooses one label and decreases its cost by a uniform integer from 1 to 6, clamped at zero. The mixed condition additionally increases a distinct uniformly chosen label by a uniform integer from 1 to 4. It does not select labels by cost slack, effect on a table, search difficulty, or measured outcome. Each family therefore contributes $3\times4\times2=24$ updates. Path relays use $m\in\{6,10,14\}$, old costs 4 and 8, and decreases $\delta\in\{1,2,3,4\}$, contributing 12 updates. The 60-case timing set was fixed before its execution. Amplification witnesses are proof checks, not post-selected additions to this timing set.
+
+\textbf{Measurement.} Each case is run three times per method, with the five-method execution order cyclically rotated by case index plus repeat index. One worker is used. Every run has fresh A* state, identical deterministic tie order $(f,-g,\text{state})$, and permits reopening and zero-cost actions. The goal is not counted as an expanded state. Search is limited to 100,000 expansions and an 8-second cooperative time check every 128 expansions; the clean reproduction additionally has a 40-second hard timeout for each child command. The actual largest concrete space is 16,384 states, largest collection has 125 abstract entries, and maximum action count is 20.
+
+Graph construction, original tables, full reference recomputation for equality checking, and accounting-only old/new comparisons are outside the timed update and search intervals. Every method pays for creation of its new heuristic evaluator. Initial setup is recorded separately in every raw case. Distance, saturation and certificate scans are instrumented in the measured routines. All 900 primary timed searches finish, with no omitted cases; exact reuse, support-only and full rebuilding have identical tables, allocations, and expansions. All five methods return the same optimal cost per case. For large timing cases, this agreement is not itself an independent concrete-state oracle; the independent concrete oracle is restricted to the tiny cases above.
+
+\input{figures/family-results}
+
+The table sums each instance's median time over its three repeats. Expansion totals count each instance once, not three times. Rewritten entries count an entire materialized distance table, including its goal, when that table is rebuilt. They do not count all reads, cached allocation metadata, or temporary structures; those costs remain in measured time and scan counters. Exact reuse writes 28.5\% of the entries overall, but writes all relay tables and is slightly slower there. The independent-coordinate family intentionally exposes additive guidance; the scaled and maximum baselines' large expansion counts here should not be generalized to a production benchmark collection. The paired per-case minimum and maximum total times, changed entries, certificate entries, and all raw runs are retained, not just the aggregate means.
+
+Three repeats characterize local timing variation, not confidence about a population of planning tasks. Small Python PDBs and microsecond update intervals are particularly sensitive to interpreter and scheduling overhead. Clean-extraction reproduction checks deterministic outputs separately from timings; the latter are allowed to change. In the two retained clean reproductions, the overall exact/full total-time ratios were 0.808 and 0.774 (primary: 0.848), while the relay ratios were 1.082 and 1.019 (primary: 1.029). All deterministic fields of all 900 runs matched in both reproductions. Neither the oracle counts nor the synthetic speed ratios establish production-planner competitiveness.
+
+\section{Relation to Existing Work and Artifact Boundaries}
+SCP's recurrence and admissibility are established \citep{comparison2017}. Existing decomposition methods optimize partitions \citep{dw2021}; exact LP sensitivity reuses solutions across state-dependent queries \citep{sensitivity2024}. Monotonic variants address how adding or refining abstractions affects SCP \citep{monotonic2026}. Incremental search, including Lifelong Planning A*, reuses search information after graph changes \citep{lpa2004}. None of these comparisons licenses a claim that goal-path optimality certificates or shortest-path reuse are new. The proposed contribution is the explicit bounded-incidence cost-decrease construction and its consequence for which tables must change under a fixed ordered partition.
+
+The source repository includes the complete generators, oracle, tests, frozen inputs, raw outputs, summary code and proof source. Its README gives one fresh-output reproduction command. No public repository URL has been created. General signed allocations, dead-end arithmetic, changes to patterns/order, multiple-order maximization, dynamic maintenance within a partially rebuilt PDB, production PDDL integration, and policies for choosing between exact reuse and full rebuilding are outside the implemented model. They are not hidden prerequisites for the claims proved here.

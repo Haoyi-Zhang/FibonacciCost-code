@@ -1,0 +1,440 @@
+{
+  "frozen_before_campaign": true,
+  "seed_rule": "literal seeds 0..3; update RNG seed=10000+seed",
+  "replicates": 3,
+  "methods": [
+    "full",
+    "exact",
+    "support",
+    "scale",
+    "maximum"
+  ],
+  "limits": {
+    "workers": 1,
+    "astar_expansions": 100000,
+    "astar_seconds": 8,
+    "cpu_campaign_seconds": 900
+  },
+  "cases": [
+    {
+      "id": "independent-sparse-6-0",
+      "family": "independent",
+      "mode": "sparse",
+      "q": 6,
+      "seed": 0
+    },
+    {
+      "id": "independent-sparse-6-1",
+      "family": "independent",
+      "mode": "sparse",
+      "q": 6,
+      "seed": 1
+    },
+    {
+      "id": "independent-sparse-6-2",
+      "family": "independent",
+      "mode": "sparse",
+      "q": 6,
+      "seed": 2
+    },
+    {
+      "id": "independent-sparse-6-3",
+      "family": "independent",
+      "mode": "sparse",
+      "q": 6,
+      "seed": 3
+    },
+    {
+      "id": "independent-sparse-8-0",
+      "family": "independent",
+      "mode": "sparse",
+      "q": 8,
+      "seed": 0
+    },
+    {
+      "id": "independent-sparse-8-1",
+      "family": "independent",
+      "mode": "sparse",
+      "q": 8,
+      "seed": 1
+    },
+    {
+      "id": "independent-sparse-8-2",
+      "family": "independent",
+      "mode": "sparse",
+      "q": 8,
+      "seed": 2
+    },
+    {
+      "id": "independent-sparse-8-3",
+      "family": "independent",
+      "mode": "sparse",
+      "q": 8,
+      "seed": 3
+    },
+    {
+      "id": "independent-sparse-10-0",
+      "family": "independent",
+      "mode": "sparse",
+      "q": 10,
+      "seed": 0
+    },
+    {
+      "id": "independent-sparse-10-1",
+      "family": "independent",
+      "mode": "sparse",
+      "q": 10,
+      "seed": 1
+    },
+    {
+      "id": "independent-sparse-10-2",
+      "family": "independent",
+      "mode": "sparse",
+      "q": 10,
+      "seed": 2
+    },
+    {
+      "id": "independent-sparse-10-3",
+      "family": "independent",
+      "mode": "sparse",
+      "q": 10,
+      "seed": 3
+    },
+    {
+      "id": "independent-mixed-6-0",
+      "family": "independent",
+      "mode": "mixed",
+      "q": 6,
+      "seed": 0
+    },
+    {
+      "id": "independent-mixed-6-1",
+      "family": "independent",
+      "mode": "mixed",
+      "q": 6,
+      "seed": 1
+    },
+    {
+      "id": "independent-mixed-6-2",
+      "family": "independent",
+      "mode": "mixed",
+      "q": 6,
+      "seed": 2
+    },
+    {
+      "id": "independent-mixed-6-3",
+      "family": "independent",
+      "mode": "mixed",
+      "q": 6,
+      "seed": 3
+    },
+    {
+      "id": "independent-mixed-8-0",
+      "family": "independent",
+      "mode": "mixed",
+      "q": 8,
+      "seed": 0
+    },
+    {
+      "id": "independent-mixed-8-1",
+      "family": "independent",
+      "mode": "mixed",
+      "q": 8,
+      "seed": 1
+    },
+    {
+      "id": "independent-mixed-8-2",
+      "family": "independent",
+      "mode": "mixed",
+      "q": 8,
+      "seed": 2
+    },
+    {
+      "id": "independent-mixed-8-3",
+      "family": "independent",
+      "mode": "mixed",
+      "q": 8,
+      "seed": 3
+    },
+    {
+      "id": "independent-mixed-10-0",
+      "family": "independent",
+      "mode": "mixed",
+      "q": 10,
+      "seed": 0
+    },
+    {
+      "id": "independent-mixed-10-1",
+      "family": "independent",
+      "mode": "mixed",
+      "q": 10,
+      "seed": 1
+    },
+    {
+      "id": "independent-mixed-10-2",
+      "family": "independent",
+      "mode": "mixed",
+      "q": 10,
+      "seed": 2
+    },
+    {
+      "id": "independent-mixed-10-3",
+      "family": "independent",
+      "mode": "mixed",
+      "q": 10,
+      "seed": 3
+    },
+    {
+      "id": "coupled-sparse-3-0",
+      "family": "coupled",
+      "mode": "sparse",
+      "q": 3,
+      "seed": 0
+    },
+    {
+      "id": "coupled-sparse-3-1",
+      "family": "coupled",
+      "mode": "sparse",
+      "q": 3,
+      "seed": 1
+    },
+    {
+      "id": "coupled-sparse-3-2",
+      "family": "coupled",
+      "mode": "sparse",
+      "q": 3,
+      "seed": 2
+    },
+    {
+      "id": "coupled-sparse-3-3",
+      "family": "coupled",
+      "mode": "sparse",
+      "q": 3,
+      "seed": 3
+    },
+    {
+      "id": "coupled-sparse-4-0",
+      "family": "coupled",
+      "mode": "sparse",
+      "q": 4,
+      "seed": 0
+    },
+    {
+      "id": "coupled-sparse-4-1",
+      "family": "coupled",
+      "mode": "sparse",
+      "q": 4,
+      "seed": 1
+    },
+    {
+      "id": "coupled-sparse-4-2",
+      "family": "coupled",
+      "mode": "sparse",
+      "q": 4,
+      "seed": 2
+    },
+    {
+      "id": "coupled-sparse-4-3",
+      "family": "coupled",
+      "mode": "sparse",
+      "q": 4,
+      "seed": 3
+    },
+    {
+      "id": "coupled-sparse-5-0",
+      "family": "coupled",
+      "mode": "sparse",
+      "q": 5,
+      "seed": 0
+    },
+    {
+      "id": "coupled-sparse-5-1",
+      "family": "coupled",
+      "mode": "sparse",
+      "q": 5,
+      "seed": 1
+    },
+    {
+      "id": "coupled-sparse-5-2",
+      "family": "coupled",
+      "mode": "sparse",
+      "q": 5,
+      "seed": 2
+    },
+    {
+      "id": "coupled-sparse-5-3",
+      "family": "coupled",
+      "mode": "sparse",
+      "q": 5,
+      "seed": 3
+    },
+    {
+      "id": "coupled-mixed-3-0",
+      "family": "coupled",
+      "mode": "mixed",
+      "q": 3,
+      "seed": 0
+    },
+    {
+      "id": "coupled-mixed-3-1",
+      "family": "coupled",
+      "mode": "mixed",
+      "q": 3,
+      "seed": 1
+    },
+    {
+      "id": "coupled-mixed-3-2",
+      "family": "coupled",
+      "mode": "mixed",
+      "q": 3,
+      "seed": 2
+    },
+    {
+      "id": "coupled-mixed-3-3",
+      "family": "coupled",
+      "mode": "mixed",
+      "q": 3,
+      "seed": 3
+    },
+    {
+      "id": "coupled-mixed-4-0",
+      "family": "coupled",
+      "mode": "mixed",
+      "q": 4,
+      "seed": 0
+    },
+    {
+      "id": "coupled-mixed-4-1",
+      "family": "coupled",
+      "mode": "mixed",
+      "q": 4,
+      "seed": 1
+    },
+    {
+      "id": "coupled-mixed-4-2",
+      "family": "coupled",
+      "mode": "mixed",
+      "q": 4,
+      "seed": 2
+    },
+    {
+      "id": "coupled-mixed-4-3",
+      "family": "coupled",
+      "mode": "mixed",
+      "q": 4,
+      "seed": 3
+    },
+    {
+      "id": "coupled-mixed-5-0",
+      "family": "coupled",
+      "mode": "mixed",
+      "q": 5,
+      "seed": 0
+    },
+    {
+      "id": "coupled-mixed-5-1",
+      "family": "coupled",
+      "mode": "mixed",
+      "q": 5,
+      "seed": 1
+    },
+    {
+      "id": "coupled-mixed-5-2",
+      "family": "coupled",
+      "mode": "mixed",
+      "q": 5,
+      "seed": 2
+    },
+    {
+      "id": "coupled-mixed-5-3",
+      "family": "coupled",
+      "mode": "mixed",
+      "q": 5,
+      "seed": 3
+    },
+    {
+      "id": "relay-6-1",
+      "family": "relay",
+      "mode": "relay",
+      "m": 6,
+      "delta": 1
+    },
+    {
+      "id": "relay-6-2",
+      "family": "relay",
+      "mode": "relay",
+      "m": 6,
+      "delta": 2
+    },
+    {
+      "id": "relay-6-3",
+      "family": "relay",
+      "mode": "relay",
+      "m": 6,
+      "delta": 3
+    },
+    {
+      "id": "relay-6-4",
+      "family": "relay",
+      "mode": "relay",
+      "m": 6,
+      "delta": 4
+    },
+    {
+      "id": "relay-10-1",
+      "family": "relay",
+      "mode": "relay",
+      "m": 10,
+      "delta": 1
+    },
+    {
+      "id": "relay-10-2",
+      "family": "relay",
+      "mode": "relay",
+      "m": 10,
+      "delta": 2
+    },
+    {
+      "id": "relay-10-3",
+      "family": "relay",
+      "mode": "relay",
+      "m": 10,
+      "delta": 3
+    },
+    {
+      "id": "relay-10-4",
+      "family": "relay",
+      "mode": "relay",
+      "m": 10,
+      "delta": 4
+    },
+    {
+      "id": "relay-14-1",
+      "family": "relay",
+      "mode": "relay",
+      "m": 14,
+      "delta": 1
+    },
+    {
+      "id": "relay-14-2",
+      "family": "relay",
+      "mode": "relay",
+      "m": 14,
+      "delta": 2
+    },
+    {
+      "id": "relay-14-3",
+      "family": "relay",
+      "mode": "relay",
+      "m": 14,
+      "delta": 3
+    },
+    {
+      "id": "relay-14-4",
+      "family": "relay",
+      "mode": "relay",
+      "m": 14,
+      "delta": 4
+    }
+  ]
+}

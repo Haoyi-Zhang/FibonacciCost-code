@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "exhaustive_graphs": 495,
+  "exhaustive_cost_pairs": 40095,
+  "sequential_mixed_updates": 1440,
+  "all_state_admissibility_checks": 384,
+  "single_table_lipschitz_checks": 98415,
+  "two_table_unit_decrease_checks": 172800,
+  "targeted_controls": [
+    "zero tight SCC rejected",
+    "new tight edge accepted",
+    "tie surviving increase accepted",
+    "three-table amplification onset is tight",
+    "unreachable states rejected",
+    "negative/float/bool/length costs rejected"
+  ],
+  "cpu_seconds": 1.089786107,
+  "wall_seconds": 1.0901513479998357,
+  "peak_rss_kib": 96424,
+  "workers": 1
+}

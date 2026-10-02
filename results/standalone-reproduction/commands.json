@@ -1,0 +1,136 @@
+[
+  {
+    "command": [
+      "tests/check_bibliography.py",
+      "--out",
+      "../cost-cascades-standalone-reproduction/bibliography_validation.json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"access_date\": \"2026-09-16\",\n  \"bib_sha256\": \"5417dd0d37508220f73298bf6457adf969631652cdf4181b5fe00f3b75ecda91\",\n  \"bibliography_entries\": 65,\n  \"category_counts\": {\n    \"abstraction\": 24,\n    \"cost_partitioning\": 20,\n    \"dynamic_shortest_paths\": 11,\n    \"planning_heuristics\": 5,\n    \"search_foundations\": 5\n  },\n  \"citation_padding_command_used\": false,\n  \"duplicate_canonical_identifiers\": 0,\n  \"duplicate_keys\": 0,\n  \"duplicate_titles\": 0,\n  \"external_scholarly_rows\": 65,\n  \"generic_or_indirect_verification_urls\": 0,\n  \"main_unique_citations\": 10,\n  \"matrix_rows\": 65,\n  \"metadata_status_counts\": {\n    \"verified\": 62,\n    \"version_cross_checked\": 3\n  },\n  \"minimum_required\": 55,\n  \"read_depth_counts\": {\n    \"bibliographic verification plus relevant cited context\": 50,\n    \"substantive full-paper or theorem/algorithm pass\": 15\n  },\n  \"scope_note\": \"Structural and provenance validation only; priority, novelty, and source interpretation remain scholarly judgments.\",\n  \"source_tier_counts\": {\n    \"author_or_institutional_copy\": 14,\n    \"institutional_bibliography\": 3,\n    \"official_proceedings_or_journal\": 31,\n    \"publisher_or_doi\": 17\n  },\n  \"status\": \"passed\",\n  \"supplement_unique_citations\": 65,\n  \"version_cross_checked_keys\": [\n    \"edelkamp2001\",\n    \"edelkamp2006\",\n    \"mergecartesian2025\"\n  ]\n}\n",
+    "stderr": "",
+    "wall_seconds": 0.6488855710001644,
+    "child_cpu_seconds": 1.059652
+  },
+  {
+    "command": [
+      "pilot.py",
+      "--out",
+      "../cost-cascades-standalone-reproduction/pilot.json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"pilot\": \"relay, Fibonacci amplifier, zero-cycle negative control, concrete A* stale-table counterexample\",\n  \"relay\": [\n    {\n      \"m\": 1,\n      \"changed\": 1,\n      \"new_values\": [\n        0\n      ]\n    },\n    {\n      \"m\": 2,\n      \"changed\": 2,\n      \"new_values\": [\n        0,\n        2\n      ]\n    },\n    {\n      \"m\": 3,\n      \"changed\": 3,\n      \"new_values\": [\n        0,\n        2,\n        0\n      ]\n    },\n    {\n      \"m\": 4,\n      \"changed\": 4,\n      \"new_values\": [\n        0,\n        2,\n        0,\n        2\n      ]\n    },\n    {\n      \"m\": 8,\n      \"changed\": 8,\n      \"new_values\": [\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2\n      ]\n    },\n    {\n      \"m\": 16,\n      \"changed\": 16,\n      \"new_values\": [\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2\n      ]\n    },\n    {\n      \"m\": 64,\n      \"changed\": 64,\n      \"new_values\": [\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2,\n        0,\n        2\n      ]\n    }\n  ],\n  \"amplifier\": {\n    \"k\": 4,\n    \"patterns\": 11,\n    \"final_amplification\": 13,\n    \"terminal_difference\": [\n      [\n        10,\n        13\n      ]\n    ],\n    \"changed_tables\": 11\n  },\n  \"stale_value\": 3,\n  \"exact_plan_cost\": 2,\n  \"search\": {\n    \"status\": \"solved\",\n    \"cost\": 2,\n    \"expansions\": 2,\n    \"generated\": 4,\n    \"seconds\": 1.9458999986454728e-05\n  },\n  \"workers\": 1,\n  \"integer_type\": \"Python arbitrary precision\",\n  \"cpu_seconds\": 0.02240996500000003,\n  \"wall_seconds\": 0.022409646000141947,\n  \"peak_rss_kib\": 94244,\n  \"failures\": 0\n}\n",
+    "stderr": "",
+    "wall_seconds": 0.6968673219998891,
+    "child_cpu_seconds": 1.0829989999999998
+  },
+  {
+    "command": [
+      "tests/check_all.py",
+      "--out",
+      "../cost-cascades-standalone-reproduction/checks.json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"status\": \"passed\",\n  \"exhaustive_graphs\": 495,\n  \"exhaustive_cost_pairs\": 40095,\n  \"sequential_mixed_updates\": 1440,\n  \"all_state_admissibility_checks\": 384,\n  \"single_table_lipschitz_checks\": 98415,\n  \"two_table_unit_decrease_checks\": 172800,\n  \"targeted_controls\": [\n    \"zero tight SCC rejected\",\n    \"new tight edge accepted\",\n    \"tie surviving increase accepted\",\n    \"three-table amplification onset is tight\",\n    \"unreachable states rejected\",\n    \"negative/float/bool/length costs rejected\"\n  ],\n  \"cpu_seconds\": 0.9074219969999999,\n  \"wall_seconds\": 0.9074663660001079,\n  \"peak_rss_kib\": 96556,\n  \"workers\": 1\n}\n",
+    "stderr": "",
+    "wall_seconds": 1.636723288999974,
+    "child_cpu_seconds": 2.043984
+  },
+  {
+    "command": [
+      "tests/check_amplification.py",
+      "--out",
+      "../cost-cascades-standalone-reproduction/amplification.json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"status\": \"passed\",\n  \"construction\": \"tight Fibonacci support-two carry amplifier\",\n  \"cpu_seconds\": 0.19944836100000007,\n  \"wall_seconds\": 0.19945728199991208,\n  \"peak_rss_kib\": 97836,\n  \"workers\": 1\n}\n",
+    "stderr": "",
+    "wall_seconds": 0.9092571489998136,
+    "child_cpu_seconds": 1.3202380000000002
+  },
+  {
+    "command": [
+      "tests/check_support_envelope.py",
+      "--out",
+      "../cost-cascades-standalone-reproduction/support_envelope.json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"status\": \"passed\",\n  \"scope\": \"finite integer over-approximation; symbolic proof is in proofs/results.tex\",\n  \"transition_grid_limit\": 8,\n  \"transition_inequality_checks\": 1849,\n  \"transition_counts\": {\n    \"P->P\": 473,\n    \"P->N\": 352,\n    \"N->P\": 512,\n    \"N->N\": 512\n  },\n  \"induction_arithmetic_checks\": 6006,\n  \"induction_max_k\": 1000,\n  \"reachable_horizon_tables\": 17,\n  \"reachable_transition_visits\": 143989,\n  \"cpu_seconds\": 0.8167711160000001,\n  \"wall_seconds\": 0.8168306549998761,\n  \"peak_rss_kib\": 93740,\n  \"workers\": 1\n}\n",
+    "stderr": "",
+    "wall_seconds": 1.4954759580000427,
+    "child_cpu_seconds": 1.906547999999999
+  },
+  {
+    "command": [
+      "tests/check_rational_model.py",
+      "--out",
+      "../cost-cascades-standalone-reproduction/rational_checks.json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"cases_with_old_or_new_minimum_tie\": 6084,\n  \"cpu_seconds\": 4.671905488,\n  \"fractional_grid_denominator\": 4,\n  \"fractional_grid_max_absolute_value\": \"2\",\n  \"fractional_support_states\": 153,\n  \"fractional_transition_counts\": {\n    \"N->N\": 512,\n    \"N->P\": 512,\n    \"P->N\": 352,\n    \"P->P\": 473\n  },\n  \"fractional_transition_inequality_checks\": 1849,\n  \"peak_rss_kib\": 93616,\n  \"rational_first_stage_checks\": 22500,\n  \"rational_reuse_changed\": 29826,\n  \"rational_reuse_exactly_unchanged\": 10269,\n  \"rational_reuse_feasible_but_not_exact\": 13689,\n  \"rational_reuse_graphs\": 495,\n  \"rational_reuse_old_new_cost_pairs\": 40095,\n  \"rational_two_stage_checks\": 337500,\n  \"rational_unit_decrease_inputs\": 1500,\n  \"scope\": \"exact Fraction finite grids; symbolic real-valued proofs remain in proofs/results.tex; candidate integer implementation is not imported\",\n  \"status\": \"passed\",\n  \"wall_seconds\": 4.672184700000116,\n  \"workers\": 1\n}\n",
+    "stderr": "",
+    "wall_seconds": 5.432241460999876,
+    "child_cpu_seconds": 5.844411000000001
+  },
+  {
+    "command": [
+      "benchmark.py",
+      "--start",
+      "0",
+      "--stop",
+      "20",
+      "--out",
+      "../cost-cascades-standalone-reproduction/campaign"
+    ],
+    "exit_code": 0,
+    "stdout": "independent-sparse-6-0 cpu=0.042 failures=0\nindependent-sparse-6-1 cpu=0.040 failures=0\nindependent-sparse-6-2 cpu=0.041 failures=0\nindependent-sparse-6-3 cpu=0.041 failures=0\nindependent-sparse-8-0 cpu=0.130 failures=0\nindependent-sparse-8-1 cpu=0.128 failures=0\nindependent-sparse-8-2 cpu=0.163 failures=0\nindependent-sparse-8-3 cpu=0.158 failures=0\nindependent-sparse-10-0 cpu=0.314 failures=0\nindependent-sparse-10-1 cpu=0.322 failures=0\nindependent-sparse-10-2 cpu=0.334 failures=0\nindependent-sparse-10-3 cpu=0.322 failures=0\nindependent-mixed-6-0 cpu=0.040 failures=0\nindependent-mixed-6-1 cpu=0.040 failures=0\nindependent-mixed-6-2 cpu=0.039 failures=0\nindependent-mixed-6-3 cpu=0.038 failures=0\nindependent-mixed-8-0 cpu=0.131 failures=0\nindependent-mixed-8-1 cpu=0.134 failures=0\nindependent-mixed-8-2 cpu=0.130 failures=0\nindependent-mixed-8-3 cpu=0.130 failures=0\n{\"completed\": 20, \"shard_cpu_seconds\": 2.7291877319999998, \"peak_rss_kib\": 95016}\n",
+    "stderr": "",
+    "wall_seconds": 3.4812298790000114,
+    "child_cpu_seconds": 3.8411449999999987
+  },
+  {
+    "command": [
+      "benchmark.py",
+      "--start",
+      "20",
+      "--stop",
+      "40",
+      "--out",
+      "../cost-cascades-standalone-reproduction/campaign"
+    ],
+    "exit_code": 0,
+    "stdout": "independent-mixed-10-0 cpu=0.405 failures=0\nindependent-mixed-10-1 cpu=0.323 failures=0\nindependent-mixed-10-2 cpu=0.321 failures=0\nindependent-mixed-10-3 cpu=0.389 failures=0\ncoupled-sparse-3-0 cpu=0.009 failures=0\ncoupled-sparse-3-1 cpu=0.011 failures=0\ncoupled-sparse-3-2 cpu=0.019 failures=0\ncoupled-sparse-3-3 cpu=0.008 failures=0\ncoupled-sparse-4-0 cpu=0.033 failures=0\ncoupled-sparse-4-1 cpu=0.047 failures=0\ncoupled-sparse-4-2 cpu=0.089 failures=0\ncoupled-sparse-4-3 cpu=0.027 failures=0\ncoupled-sparse-5-0 cpu=0.107 failures=0\ncoupled-sparse-5-1 cpu=0.138 failures=0\ncoupled-sparse-5-2 cpu=0.305 failures=0\ncoupled-sparse-5-3 cpu=0.078 failures=0\ncoupled-mixed-3-0 cpu=0.009 failures=0\ncoupled-mixed-3-1 cpu=0.010 failures=0\ncoupled-mixed-3-2 cpu=0.017 failures=0\ncoupled-mixed-3-3 cpu=0.007 failures=0\n{\"completed\": 20, \"shard_cpu_seconds\": 2.36103825, \"peak_rss_kib\": 95400}\n",
+    "stderr": "",
+    "wall_seconds": 3.0196015879998868,
+    "child_cpu_seconds": 3.429818000000002
+  },
+  {
+    "command": [
+      "benchmark.py",
+      "--start",
+      "40",
+      "--stop",
+      "60",
+      "--out",
+      "../cost-cascades-standalone-reproduction/campaign"
+    ],
+    "exit_code": 0,
+    "stdout": "coupled-mixed-4-0 cpu=0.042 failures=0\ncoupled-mixed-4-1 cpu=0.044 failures=0\ncoupled-mixed-4-2 cpu=0.090 failures=0\ncoupled-mixed-4-3 cpu=0.028 failures=0\ncoupled-mixed-5-0 cpu=0.107 failures=0\ncoupled-mixed-5-1 cpu=0.136 failures=0\ncoupled-mixed-5-2 cpu=0.260 failures=0\ncoupled-mixed-5-3 cpu=0.084 failures=0\nrelay-6-1 cpu=0.001 failures=0\nrelay-6-2 cpu=0.002 failures=0\nrelay-6-3 cpu=0.001 failures=0\nrelay-6-4 cpu=0.002 failures=0\nrelay-10-1 cpu=0.012 failures=0\nrelay-10-2 cpu=0.018 failures=0\nrelay-10-3 cpu=0.015 failures=0\nrelay-10-4 cpu=0.013 failures=0\nrelay-14-1 cpu=0.153 failures=0\nrelay-14-2 cpu=0.161 failures=0\nrelay-14-3 cpu=0.170 failures=0\nrelay-14-4 cpu=0.171 failures=0\n{\"completed\": 20, \"shard_cpu_seconds\": 1.5211021980000001, \"peak_rss_kib\": 95276}\n",
+    "stderr": "",
+    "wall_seconds": 2.3514222729997982,
+    "child_cpu_seconds": 2.697121000000002
+  },
+  {
+    "command": [
+      "summarize.py",
+      "--root",
+      "../cost-cascades-standalone-reproduction/campaign",
+      "--out",
+      "../cost-cascades-standalone-reproduction"
+    ],
+    "exit_code": 0,
+    "stdout": "independent full write%=100.0 update_ms=2.595 total_ms=6.87 ratio=1.000 medratio=1.000 exp= 672\nindependent exact write%=21.9 update_ms=0.955 total_ms=5.13 ratio=0.746 medratio=0.740 exp= 672\nindependent support write%=37.5 update_ms=0.903 total_ms=4.86 ratio=0.708 medratio=0.714 exp= 672\nindependent scale write%=0.0 update_ms=0.739 total_ms=657.36 ratio=95.741 medratio=74.362 exp= 123028\nindependent maximum write%=100.0 update_ms=0.883 total_ms=662.78 ratio=96.530 medratio=75.860 exp= 121576\ncoupled full write%=100.0 update_ms=10.078 total_ms=38.79 ratio=1.000 medratio=1.000 exp= 2272\ncoupled exact write%=22.5 update_ms=3.536 total_ms=29.70 ratio=0.766 medratio=0.418 exp= 2272\ncoupled support write%=75.0 update_ms=6.941 total_ms=31.95 ratio=0.824 medratio=0.787 exp= 2272\ncoupled scale write%=0.0 update_ms=0.812 total_ms=256.03 ratio=6.601 medratio=7.450 exp= 27839\ncoupled maximum write%=100.0 update_ms=3.222 total_ms=164.37 ratio=4.238 medratio=3.635 exp= 15895\nrelay full write%=100.0 update_ms=1.139 total_ms=2.14 ratio=1.000 medratio=1.000 exp= 66\nrelay exact write%=100.0 update_ms=1.170 total_ms=2.18 ratio=1.019 medratio=1.117 exp= 66\nrelay support write%=100.0 update_ms=1.023 total_ms=2.04 ratio=0.954 medratio=0.969 exp= 66\nrelay scale write%=0.0 update_ms=0.258 total_ms=117.00 ratio=54.755 medratio=14.284 exp= 13404\nrelay maximum write%=100.0 update_ms=0.340 total_ms=113.32 ratio=53.031 medratio=11.599 exp= 12585\nall full write%=100.0 update_ms=13.812 total_ms=47.79 ratio=1.000 medratio=1.000 exp= 3010\nall exact write%=28.5 update_ms=5.661 total_ms=37.00 ratio=0.774 medratio=0.767 exp= 3010\nall support write%=67.4 update_ms=8.867 total_ms=38.85 ratio=0.813 medratio=0.770 exp= 3010\nall scale write%=0.0 update_ms=1.809 total_ms=1030.40 ratio=21.560 medratio=27.302 exp= 164271\nall maximum write%=100.0 update_ms=4.444 total_ms=940.47 ratio=19.679 medratio=14.540 exp= 150056\n",
+    "stderr": "",
+    "wall_seconds": 0.6664833269999235,
+    "child_cpu_seconds": 1.0756759999999994
+  }
+]

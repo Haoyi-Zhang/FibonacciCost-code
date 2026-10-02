@@ -1,0 +1,172 @@
+{
+  "pilot": "relay, Fibonacci amplifier, zero-cycle negative control, concrete A* stale-table counterexample",
+  "relay": [
+    {
+      "m": 1,
+      "changed": 1,
+      "new_values": [
+        0
+      ]
+    },
+    {
+      "m": 2,
+      "changed": 2,
+      "new_values": [
+        0,
+        2
+      ]
+    },
+    {
+      "m": 3,
+      "changed": 3,
+      "new_values": [
+        0,
+        2,
+        0
+      ]
+    },
+    {
+      "m": 4,
+      "changed": 4,
+      "new_values": [
+        0,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "m": 8,
+      "changed": 8,
+      "new_values": [
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "m": 16,
+      "changed": 16,
+      "new_values": [
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2
+      ]
+    },
+    {
+      "m": 64,
+      "changed": 64,
+      "new_values": [
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        2
+      ]
+    }
+  ],
+  "amplifier": {
+    "k": 4,
+    "patterns": 11,
+    "final_amplification": 13,
+    "terminal_difference": [
+      [
+        10,
+        13
+      ]
+    ],
+    "changed_tables": 11
+  },
+  "stale_value": 3,
+  "exact_plan_cost": 2,
+  "search": {
+    "status": "solved",
+    "cost": 2,
+    "expansions": 2,
+    "generated": 4,
+    "seconds": 2.2013000034348806e-05
+  },
+  "workers": 1,
+  "integer_type": "Python arbitrary precision",
+  "cpu_seconds": 0.019275198999999965,
+  "wall_seconds": 0.019276084000011906,
+  "peak_rss_kib": 93740,
+  "failures": 0
+}

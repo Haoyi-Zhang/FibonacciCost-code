@@ -1,0 +1,125 @@
+{
+  "status": "passed",
+  "scope": "finite integer over-approximation; symbolic proof is in proofs/results.tex",
+  "transition_grid_limit": 8,
+  "transition_inequality_checks": 1849,
+  "transition_counts": {
+    "P->P": 473,
+    "P->N": 352,
+    "N->P": 512,
+    "N->N": 512
+  },
+  "induction_arithmetic_checks": 6006,
+  "induction_max_k": 1000,
+  "reachable_horizon_tables": 17,
+  "reachable_transition_visits": 143989,
+  "reachable_envelope": [
+    {
+      "tables": 1,
+      "reachable_normalized_states": 4,
+      "maximum_infinity_norm": 1,
+      "proved_odd_stage_bound": 1,
+      "bound_attained_in_overapproximation": true
+    },
+    {
+      "tables": 2,
+      "reachable_normalized_states": 6,
+      "maximum_infinity_norm": 1
+    },
+    {
+      "tables": 3,
+      "reachable_normalized_states": 10,
+      "maximum_infinity_norm": 2,
+      "proved_odd_stage_bound": 2,
+      "bound_attained_in_overapproximation": true
+    },
+    {
+      "tables": 4,
+      "reachable_normalized_states": 14,
+      "maximum_infinity_norm": 2
+    },
+    {
+      "tables": 5,
+      "reachable_normalized_states": 21,
+      "maximum_infinity_norm": 3,
+      "proved_odd_stage_bound": 3,
+      "bound_attained_in_overapproximation": true
+    },
+    {
+      "tables": 6,
+      "reachable_normalized_states": 31,
+      "maximum_infinity_norm": 4
+    },
+    {
+      "tables": 7,
+      "reachable_normalized_states": 48,
+      "maximum_infinity_norm": 5,
+      "proved_odd_stage_bound": 5,
+      "bound_attained_in_overapproximation": true
+    },
+    {
+      "tables": 8,
+      "reachable_normalized_states": 71,
+      "maximum_infinity_norm": 6
+    },
+    {
+      "tables": 9,
+      "reachable_normalized_states": 108,
+      "maximum_infinity_norm": 8,
+      "proved_odd_stage_bound": 8,
+      "bound_attained_in_overapproximation": true
+    },
+    {
+      "tables": 10,
+      "reachable_normalized_states": 165,
+      "maximum_infinity_norm": 10
+    },
+    {
+      "tables": 11,
+      "reachable_normalized_states": 257,
+      "maximum_infinity_norm": 13,
+      "proved_odd_stage_bound": 13,
+      "bound_attained_in_overapproximation": true
+    },
+    {
+      "tables": 12,
+      "reachable_normalized_states": 395,
+      "maximum_infinity_norm": 16
+    },
+    {
+      "tables": 13,
+      "reachable_normalized_states": 616,
+      "maximum_infinity_norm": 21,
+      "proved_odd_stage_bound": 21,
+      "bound_attained_in_overapproximation": true
+    },
+    {
+      "tables": 14,
+      "reachable_normalized_states": 967,
+      "maximum_infinity_norm": 26
+    },
+    {
+      "tables": 15,
+      "reachable_normalized_states": 1506,
+      "maximum_infinity_norm": 34,
+      "proved_odd_stage_bound": 34,
+      "bound_attained_in_overapproximation": true
+    },
+    {
+      "tables": 16,
+      "reachable_normalized_states": 2383,
+      "maximum_infinity_norm": 42
+    },
+    {
+      "tables": 17,
+      "reachable_normalized_states": 3748,
+      "maximum_infinity_norm": 55,
+      "proved_odd_stage_bound": 55,
+      "bound_attained_in_overapproximation": true
+    }
+  ],
+  "cpu_seconds": 0.7378196760000001,
+  "wall_seconds": 0.7378689990000566,
+  "peak_rss_kib": 93740,
+  "workers": 1
+}

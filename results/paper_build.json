@@ -1,0 +1,47 @@
+{
+  "bibliography_source_copies_identical": true,
+  "child_cpu_seconds": 4.8430029999999995,
+  "child_peak_rss_kib": 93612,
+  "documents": {
+    "main": {
+      "all_embedded": true,
+      "bibliography_items": 10,
+      "bytes": 276427,
+      "font_count": 18,
+      "font_types": [
+        "Type 1"
+      ],
+      "pages": 2,
+      "sha256": "15a2088e3df842231e9117e48a52fd7a9075a596198fdb3bb89afbcd6deba706",
+      "type3_fonts": 0
+    },
+    "supplement": {
+      "all_embedded": true,
+      "bibliography_items": 65,
+      "bytes": 295677,
+      "font_count": 14,
+      "font_types": [
+        "Type 1"
+      ],
+      "pages": 10,
+      "sha256": "683bfae044bf3b1af8d08ff6d336068ac89844faf7f678e296c6902ba8c599da",
+      "type3_fonts": 0
+    }
+  },
+  "main_exactly_two_pages": true,
+  "publisher_style_hashes": {
+    "aaai2027.bst": "5db7765ba99de5c1e4686f9b3940a0add9c5e702f2164514462bec130ccb6e3c",
+    "aaai2027.sty": "391bce82815bf698b8e382dd3ae7e30c75d7ab46df140cb295b1266016bc8623"
+  },
+  "publisher_style_hashes_match_supplied_template": true,
+  "source_spacing_and_margin_override_scan": "passed",
+  "status": "passed",
+  "supplement_under_20_mib": true,
+  "toolchain": {
+    "bibtex": "bibtex.original",
+    "pdffonts": "pdffonts",
+    "pdfinfo": "pdfinfo",
+    "pdflatex": "pdflatex"
+  },
+  "wall_seconds": 4.029735327000026
+}

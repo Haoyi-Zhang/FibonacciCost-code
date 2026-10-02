@@ -1,0 +1,90 @@
+{
+  "execution_status": {
+    "amplifier_witnesses_per_check_run": 9,
+    "clean_reproductions_retained": 2,
+    "concrete_state_update_checks_per_check_run": 384,
+    "dependency_installations": 0,
+    "deterministic_search_records_checked_per_reproduction": 900,
+    "downloads_for_experiments_bytes": 0,
+    "exact_rational_feasible_but_inexact_negatives_per_run": 13689,
+    "exact_rational_first_stage_checks_per_run": 22500,
+    "exact_rational_reuse_pairs_per_run": 40095,
+    "exact_rational_transition_checks_per_run": 1849,
+    "exact_rational_two_stage_checks_per_run": 337500,
+    "exact_rational_unit_decrease_inputs_per_run": 1500,
+    "exhaustive_graph_cost_pairs_per_check_run": 40095,
+    "external_compute": false,
+    "primary_timed_search_failures": 0,
+    "primary_timed_searches": 900,
+    "private_data": false,
+    "reachable_envelope_horizon_tables": 17,
+    "sequential_updates_per_check_run": 1440,
+    "single_table_lipschitz_cases_per_check_run": 98415,
+    "support_two_induction_arithmetic_checks_per_run": 6006,
+    "support_two_transition_checks_per_run": 1849,
+    "two_table_unit_decrease_cases_per_check_run": 172800
+  },
+  "exploratory_probe_accounting": {
+    "conservative_cpu_allowance_seconds": 45,
+    "description": "One serial Fibonacci-amplifier arithmetic prototype preceded the retained checker. Its duration was not separately metered; it used no child workers and is conservatively charged at the 45-second tool bound.",
+    "unmetered_scientific_call_count": 1
+  },
+  "intake": {
+    "cgroup_memory_limit_bytes": 4294967296,
+    "cpu_quota_cores": 4,
+    "note": "Intake values were recorded once at project start; no stress test was performed.",
+    "swap_bytes": 0
+  },
+  "limits": {
+    "astar_cooperative_seconds": 8,
+    "astar_expansion_limit": 100000,
+    "brief_total_cpu_seconds": 28800,
+    "child_command_hard_timeout_seconds": 40,
+    "concurrent_child_jobs": 1,
+    "memory_peak_limit_gib": 3.5,
+    "repair_and_reproduction_reserved_cpu_seconds": 225,
+    "scientific_workers": 1,
+    "working_campaign_cpu_seconds": 900,
+    "zip_target_bytes": 134217728
+  },
+  "measured_components": {
+    "final_tex_build_child_cpu_seconds_excluded_from_scientific_total": 4.843003,
+    "full_project_retained_reproduction_child_cpu_seconds": 23.96225,
+    "primary_amplification_check_cpu_seconds": 0.445423785,
+    "primary_benchmark_shard_cpu_seconds": [
+      2.738650812,
+      2.074914102,
+      1.382338176
+    ],
+    "primary_case_cpu_seconds_subset_of_shards": 6.161886875,
+    "primary_correctness_check_cpu_seconds": 1.089786107,
+    "primary_pilot_cpu_seconds": 0.019275198999999965,
+    "primary_rational_check_cpu_seconds": 4.460741448,
+    "primary_support_envelope_check_cpu_seconds": 1.4213072679999998,
+    "standalone_clean_reproduction_child_cpu_seconds": 24.32224
+  },
+  "measured_plus_exploratory_allowance_cpu_seconds": 106.916926897,
+  "measured_scientific_cpu_seconds": 61.916926897,
+  "measured_scientific_peak_rss_kib": 97880,
+  "note": "Reproduction requires deterministic scientific fields to match, including the exact-rational report; wall/CPU/RSS and fine-grained timing fields are excluded from equality. Primary timing is retained rather than replaced by either reproduction. Duplicate final archive-extraction QA is performed outside this retained scientific accounting.",
+  "retained_evidence": {
+    "clean_reproductions": [
+      "results/reproduction/commands.json",
+      "results/reproduction/reproduction.json",
+      "results/reproduction/rational_checks.json",
+      "results/standalone-reproduction/commands.json",
+      "results/standalone-reproduction/reproduction.json",
+      "results/standalone-reproduction/rational_checks.json"
+    ],
+    "document_build": "results/paper_build.json",
+    "primary_benchmark": "results/campaign/ plus results/summary.json",
+    "primary_tests": [
+      "results/pilot.json",
+      "results/checks.json",
+      "results/amplification.json",
+      "results/support_envelope.json",
+      "results/rational_checks.json"
+    ]
+  },
+  "scope": "Cumulative measured CPU for the retained pilot, correctness/onset checks, amplification, support-envelope and exact-rational checks, primary benchmark shards, and retained full-project and standalone reproductions. Editorial work, web retrieval, ordinary file I/O, TeX, packaging, and duplicate post-package QA are excluded from the scientific total."
+}
