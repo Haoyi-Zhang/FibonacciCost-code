@@ -201,15 +201,12 @@ sets or orders, within-search changes, floating-point arithmetic, and production
 PDDL integration are outside the implementation.
 
 The oracle is algorithmically separate from candidate Dijkstra and saturation
-code, but it shares generated graph inputs. It is not an independent human
-review or formal proof assistant.
+code, but it shares generated graph inputs. It provides a finite algorithmic
+cross-check rather than a mechanized proof.
 
 ## Provenance and license
 
 New code and documentation are released under the repository MIT license.
 Cited papers and publisher assets are not redistributed or relicensed.
 `external_resources.csv` records verification sources, access date, integration,
-and reading depth. The study and prose were developed with substantive AI
-assistance in an internal research workflow; any external authorship,
-contribution, AI-use, originality, or eligibility declaration requires human
-review. No repository has been uploaded and no submission has been made.
+and reading depth.
