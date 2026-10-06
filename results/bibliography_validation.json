@@ -1,5 +1,7 @@
 {
   "access_date": "2026-09-16",
+  "artifact_audit_unique_citations": 65,
+  "artifact_main_selection_count": 10,
   "bib_sha256": "5417dd0d37508220f73298bf6457adf969631652cdf4181b5fe00f3b75ecda91",
   "bibliography_entries": 65,
   "category_counts": {
@@ -15,7 +17,6 @@
   "duplicate_titles": 0,
   "external_scholarly_rows": 65,
   "generic_or_indirect_verification_urls": 0,
-  "main_unique_citations": 10,
   "matrix_rows": 65,
   "metadata_status_counts": {
     "verified": 62,
@@ -26,6 +27,7 @@
     "bibliographic verification plus relevant cited context": 50,
     "substantive full-paper or theorem/algorithm pass": 15
   },
+  "report_scope": "artifact_bibliography_audit",
   "scope_note": "Structural and provenance validation only; priority, novelty, and source interpretation remain scholarly judgments.",
   "source_tier_counts": {
     "author_or_institutional_copy": 14,
@@ -34,7 +36,6 @@
     "publisher_or_doi": 17
   },
   "status": "passed",
-  "supplement_unique_citations": 65,
   "version_cross_checked_keys": [
     "edelkamp2001",
     "edelkamp2006",

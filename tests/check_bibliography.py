@@ -4,6 +4,10 @@ This checker is intentionally structural. It verifies the curated records,
 source-provenance fields, cross-file alignment, citation coverage, and absence
 of wildcard padding. It cannot establish global scholarly priority or replace
 human reading of the cited works.
+
+The deterministic output describes the retained artifact audit only. Publisher
+inputs are still checked whenever present; their context-specific receipt can
+be written separately with --publisher-out.
 """
 from __future__ import annotations
 
@@ -130,7 +134,14 @@ def is_direct_scholarly_url(url: str) -> bool:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--out", default="results/bibliography_validation.json")
+    parser.add_argument(
+        "--out", default="results/bibliography_validation.json",
+        help="artifact-audit report path; '-' prints it without writing a file",
+    )
+    parser.add_argument(
+        "--publisher-out",
+        help="separate publisher-integration report; requires publisher sources",
+    )
     args = parser.parse_args()
 
     artifact = Path(__file__).resolve().parents[1]
@@ -143,6 +154,8 @@ def main() -> None:
 
     canonical_bytes = canonical.read_bytes()
     publisher_present = paper_dir.is_dir()
+    if args.publisher_out is not None:
+        assert publisher_present, "publisher report requested but publisher sources are missing"
     if publisher_present:
         assert paper_copy.is_file(), "missing publisher bibliography copy"
     if paper_copy.exists():
@@ -264,21 +277,11 @@ def main() -> None:
 
     result = {
         "status": "passed",
+        "report_scope": "artifact_bibliography_audit",
         "minimum_required": MIN_REFERENCES,
         "bibliography_entries": len(blocks),
         "artifact_audit_unique_citations": len(literature_citations),
-        "artifact_main_selection_count": len(EXPECTED_MAIN),
-        "publisher_documents_validated": publisher_present,
-        "main_unique_citations": len(main_citations) if publisher_present else None,
-        "supplement_unique_citations": len(supplement_citations) if publisher_present else None,
-        "publisher_citation_keys": {
-            "main": sorted(main_citations),
-            "supplement": sorted(supplement_citations),
-        },
-        "publisher_input_files": {
-            "main": sorted(path.relative_to(project.resolve()).as_posix() for path in main_sources),
-            "supplement": sorted(path.relative_to(project.resolve()).as_posix() for path in supplement_sources),
-        },
+        "artifact_main_selection_count": sum(row["cited_in_main"] == "yes" for row in matrix),
         "citation_padding_command_used": False,
         "duplicate_keys": 0,
         "duplicate_titles": 0,
@@ -298,12 +301,41 @@ def main() -> None:
             "source interpretation remain scholarly judgments."
         ),
     }
-    out = Path(args.out)
-    if not out.is_absolute():
+    out = None if args.out == "-" else Path(args.out)
+    if out is not None and not out.is_absolute():
         out = artifact / out
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(json.dumps(result, indent=2, sort_keys=True))
+    publisher_out = Path(args.publisher_out) if args.publisher_out is not None else None
+    if publisher_out is not None:
+        if not publisher_out.is_absolute():
+            publisher_out = artifact / publisher_out
+        assert out is None or publisher_out.resolve() != out.resolve(), (
+            "artifact and publisher report paths must differ"
+        )
+        publisher_result = {
+            "status": "passed",
+            "report_scope": "publisher_bibliography_integration",
+            "artifact_audit_validated": True,
+            "publisher_documents_validated": True,
+            "main_unique_citations": len(main_citations),
+            "supplement_unique_citations": len(supplement_citations),
+            "publisher_citation_keys": {
+                "main": sorted(main_citations),
+                "supplement": sorted(supplement_citations),
+            },
+            "publisher_input_files": {
+                "main": sorted(path.relative_to(project.resolve()).as_posix() for path in main_sources),
+                "supplement": sorted(path.relative_to(project.resolve()).as_posix() for path in supplement_sources),
+            },
+            "bib_sha256": result["bib_sha256"],
+            "bibliography_source_copies_identical": True,
+        }
+        publisher_out.parent.mkdir(parents=True, exist_ok=True)
+        publisher_out.write_text(json.dumps(publisher_result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    serialized = json.dumps(result, indent=2, sort_keys=True)
+    if out is not None:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(serialized + "\n", encoding="utf-8")
+    print(serialized)
 
 
 if __name__ == "__main__":
