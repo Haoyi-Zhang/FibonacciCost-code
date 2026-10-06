@@ -100,6 +100,19 @@ timing and process measurements are retained separately and need not match.
 
 A slower host that hits a timeout has not reproduced the campaign; partial
 outputs remain for diagnosis.
+The benchmark exits nonzero after retaining a case with any incomplete search.
+The summary retains unsuccessful runs and failure counts, but its command also
+exits nonzero; manuscript-table generation refuses a failed campaign. Coverage
+checks reject duplicate cases/repeats, altered case specifications, unknown
+methods, differing solution costs and inconsistent successful repeat counters.
+`tests/check_evaluation.py --out NEW_DIRECTORY` exercises these reporting gates
+on owned fixtures. This check does not take Linux resource measurements; the
+benchmark-driver controls in it run only on Linux.
+
+The prepared `.github/workflows/scientific-checks.yml` runs the flat artifact
+repository on Ubuntu 24.04, with a ten-minute whole-run limit, a 2 GiB virtual
+memory limit, sequential bounded children and retained raw outputs even after
+failure. Preparing the workflow does not establish a successful hosted run.
 
 ## Repository map
 
@@ -111,6 +124,7 @@ outputs remain for diagnosis.
 - `src/families.py`: coordinate, relay, and amplifier generators.
 - `src/platform_support.py`: Linux/CPython preflight and truthful `resource`
   accounting contract; unsupported platforms fail before execution.
+- `src/evaluation.py`: run-inventory, solution-agreement and repeat checks.
 - `pilot.py`: smallest end-to-end discriminating cases and negative controls.
 - `tests/check_all.py`: 40,095 graph/cost pairs, 98,415 Lipschitz cases,
   172,800 two-table onset cases, 1,440 sequential updates, concrete
@@ -127,6 +141,10 @@ outputs remain for diagnosis.
   supplement citation, the ten-reference main selection, matrix alignment, no
   wildcard padding, and byte-identical BibTeX copies when the full project is
   present.
+- `tests/check_evaluation.py`: completion/reporting and coverage regressions.
+- `tests/check_baselines.py`: 384 owned state checks and all consistency edges
+  for each of the scaling and maximum baselines, plus explicit old-zero-cost
+  controls, using an independent concrete Bellman--Ford distance oracle.
 - `benchmark.py`: transparent five-method, 60-case timing runner.
 - `summarize.py`: per-case medians and family aggregates without case filtering.
 - `make_tables.py`: data-derived manuscript tables.
@@ -173,7 +191,7 @@ bounded Python microbenchmarks, not a production-planner speed claim.
 The bibliography contains 65 distinct works across shortest-path/search
 foundations, planning heuristics, abstraction methods, cost partitioning/SCP,
 and dynamic or parametric shortest paths. All 65 are cited in the supplement's
-argument. The two-page paper uses ten directly relevant works. The matrix
+argument. The Elsevier research note uses ten directly relevant works. The matrix
 records 15 substantive full-paper or theorem/algorithm passes and 50
 bibliographic plus relevant-passage checks. Every row has a direct scholarly
 verification URL, a stable identifier where available, a source tier, a

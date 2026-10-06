@@ -117,6 +117,8 @@ def main() -> None:
         print(parts[0], "exit=0", flush=True)
 
     run(["tests/check_bibliography.py", "--out", out / "bibliography_validation.json"])
+    run(["tests/check_evaluation.py", "--out", out / "evaluation-regressions"])
+    run(["tests/check_baselines.py", "--out", out / "baseline_checks.json"])
     run(["pilot.py", "--out", out / "pilot.json"])
     run(["tests/check_all.py", "--out", out / "checks.json"])
     run(["tests/check_amplification.py", "--out", out / "amplification.json"])

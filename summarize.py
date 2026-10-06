@@ -1,17 +1,22 @@
 """Summarize all frozen cases, retaining failures and paired timing variability."""
-import argparse,csv,json,statistics
+import argparse,csv,json,statistics,sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent / 'src'))
+from evaluation import validate_runs
 
 
 def summarize(root,output):
     config=json.loads(Path('inputs/campaign.json').read_text())
-    expected={s['id'] for s in config['cases']}
+    expected={s['id']:s for s in config['cases']}
     cases=[json.loads(p.read_text()) for p in sorted(Path(root).glob('*.json'))]
-    if {c['spec']['id'] for c in cases}!=expected:
+    if len(cases)!=len(expected) or {c['spec']['id'] for c in cases}!=set(expected):
         raise ValueError('missing or unexpected campaign cases')
     rows=[];bycase={}
     for c in cases:
         cid=c['spec']['id'];bycase[cid]={}
+        if c['spec'] != expected[cid]:
+            raise ValueError('case specification differs from frozen protocol: ' + cid)
+        validate_runs(c['runs'], config['methods'], config['replicates'])
         for method in config['methods']:
             runs=[r for r in c['runs'] if r['method']==method]
             if len(runs)!=config['replicates']:
@@ -69,4 +74,6 @@ def summarize(root,output):
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--root',default='results/campaign');p.add_argument('--out',default='results')
-    a=p.parse_args();summarize(a.root,a.out)
+    a=p.parse_args();result=summarize(a.root,a.out)
+    if result['failures']:
+        raise SystemExit('incomplete searches; diagnostic summary retained, not a completed campaign')

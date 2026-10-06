@@ -15,6 +15,7 @@ from platform_support import require_supported_environment
 resource = require_supported_environment('benchmark.py')
 from cascades import rebuild, update, distances, Work, astar
 from families import make_task, relay_task, changed_costs
+from evaluation import validate_runs
 
 
 def run_case(spec, config, index):
@@ -67,10 +68,10 @@ def run_case(spec, config, index):
                         total_seconds=update_s+result['seconds'],scale=[num,den],
                         search=result,work=asdict(work))
             runs.append(record)
-    solved={r['search']['cost'] for r in runs if r['search']['status']=='solved'}
-    assert len(solved)<=1, 'different returned solution costs'
-    exact_exp={r['search']['expansions'] for r in runs if r['method'] in ('full','exact','support')}
-    assert len(exact_exp)==1, 'identical heuristics must yield identical deterministic searches'
+    # Outcome/agreement gates run in main after saving the complete raw case.
+    # Time-limited searches may stop at different expansion counts; the shared
+    # validator compares successful deterministic searches and rejects every
+    # incomplete case without discarding its measurements.
     return dict(spec=spec,inputs=dict(q=task.q,dims=task.dims,actions=task.actions,
                     old_costs=task.costs,new_costs=costs,patterns=task.patterns,start=task.start),
                 dimensions=dict(concrete_states=task.q**task.dims,labels=len(costs),patterns=len(graphs),
@@ -100,6 +101,8 @@ def main():
             previous=json.loads(dest.read_text())
             if previous['spec']!=spec or len(previous['runs'])!=len(config['methods'])*config['replicates']:
                 raise SystemExit('existing result does not match frozen specification')
+            if validate_runs(previous['runs'],config['methods'],config['replicates']):
+                raise SystemExit('existing case has incomplete searches; raw output retained')
             continue
         if campaign_cpu+time.process_time()-start_cpu>=config['limits']['cpu_campaign_seconds']*0.75:
             raise SystemExit('campaign repair reserve reached')
@@ -108,6 +111,8 @@ def main():
         tmp.write_text(json.dumps(result,indent=2)+'\n');tmp.replace(dest)
         completed.append(spec['id'])
         print(spec['id'], 'cpu=%.3f'%result['cpu_seconds'], 'failures='+str(sum(r['search']['status']!='solved' for r in result['runs'])),flush=True)
+        if validate_runs(result['runs'],config['methods'],config['replicates']):
+            raise SystemExit('case has incomplete searches; raw output retained, no completion claim')
     print(json.dumps(dict(completed=len(completed),shard_cpu_seconds=time.process_time()-start_cpu,
                           peak_rss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)))
 
