@@ -24,6 +24,11 @@ Complete proofs are in `proofs/results.tex` and `proofs/supplement.pdf`. The
 bounded 65-source collision audit is in `proofs/literature.tex`, with structured
 metadata in `literature_matrix.csv` and canonical BibTeX in
 `literature/references.bib`.
+In the full project archive, the publisher submission uses 10 references in
+`../paper/main.tex` and 2 in the essential-proof supplement,
+`../paper/supplement.tex`, whose body is `../paper/supplement-proofs.tex`.
+The full artifact proof and literature-audit sources remain available here;
+they are not inputs to that publisher supplement.
 
 ## Supported reproduction environment
 
@@ -109,10 +114,10 @@ methods, differing solution costs and inconsistent successful repeat counters.
 on owned fixtures. This check does not take Linux resource measurements; the
 benchmark-driver controls in it run only on Linux.
 
-The prepared `.github/workflows/scientific-checks.yml` runs the flat artifact
-repository on Ubuntu 24.04, with a ten-minute whole-run limit, a 2 GiB virtual
-memory limit, sequential bounded children and retained raw outputs even after
-failure. Preparing the workflow does not establish a successful hosted run.
+The `.github/workflows/scientific-checks.yml` workflow runs the flat artifact
+repository on Ubuntu 24.04 with a fifteen-minute job limit. Its reproduction
+command has a ten-minute wall-time limit and a 2 GiB virtual memory limit, and
+runs sequential bounded children. Raw outputs are retained even after failure.
 
 ## Repository map
 
@@ -137,10 +142,13 @@ failure. Preparing the workflow does not establish a successful hosted run.
 - `tests/check_rational_model.py`: independent `Fraction`-arithmetic checks of
   the real-valued onset, support-two transition, and exact-reuse boundaries; it
   imports none of the candidate implementation.
-- `tests/check_bibliography.py`: verifies 65 unique records, all-context
-  supplement citation, the ten-reference main selection, matrix alignment, no
-  wildcard padding, and byte-identical BibTeX copies when the full project is
-  present.
+- `tests/check_bibliography.py`: verifies 65 unique records and their citation
+  coverage in the artifact literature audit, the ten-reference main selection,
+  matrix alignment, provenance, and no wildcard padding. When the full project
+  is present, it also follows the actual publisher inputs, checks the main's
+  10-reference and essential supplement's 2-reference selections, and requires
+  byte-identical BibTeX copies. An artifact-only check does not claim to validate
+  absent publisher documents.
 - `tests/check_evaluation.py`: completion/reporting and coverage regressions.
 - `tests/check_baselines.py`: 384 owned state checks and all consistency edges
   for each of the scaling and maximum baselines, plus explicit old-zero-cost
@@ -190,8 +198,11 @@ bounded Python microbenchmarks, not a production-planner speed claim.
 
 The bibliography contains 65 distinct works across shortest-path/search
 foundations, planning heuristics, abstraction methods, cost partitioning/SCP,
-and dynamic or parametric shortest paths. All 65 are cited in the supplement's
-argument. The Elsevier research note uses ten directly relevant works. The matrix
+and dynamic or parametric shortest paths. All 65 are cited in the artifact's
+literature audit, `proofs/literature.tex`. The Elsevier submission uses ten
+directly relevant works in the main text and two in the essential-proof
+supplement; the full audit, matrix, and source provenance remain intact in the
+artifact rather than being included in that supplement. The matrix
 records 15 substantive full-paper or theorem/algorithm passes and 50
 bibliographic plus relevant-passage checks. Every row has a direct scholarly
 verification URL, a stable identifier where available, a source tier, a

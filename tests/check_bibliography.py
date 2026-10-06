@@ -24,6 +24,8 @@ EXPECTED_MAIN = {
     "dstar2002", "lpa2004", "online2021", "dw2021",
     "sensitivity2024", "monotonic2026",
 }
+EXPECTED_SUPPLEMENT = {"scp2020", "incremental2020"}
+SUPPLEMENT_PROOFS = "supplement-proofs.tex"
 ALLOWED_DEPTH = {
     "substantive full-paper or theorem/algorithm pass",
     "bibliographic verification plus relevant cited context",
@@ -84,6 +86,34 @@ def citation_keys(text: str) -> set[str]:
     return keys
 
 
+def publisher_sources(root: Path, source: Path) -> dict[Path, str]:
+    """Read literal TeX inputs from the publisher working directory."""
+    sources: dict[Path, str] = {}
+    active: set[Path] = set()
+    project = root.parent.resolve()
+
+    def visit(path: Path) -> None:
+        path = path.resolve()
+        assert path.is_relative_to(project), f"TeX input outside project: {path}"
+        assert path not in active, f"cyclic TeX input: {path}"
+        assert path.is_file(), f"missing TeX input: {path}"
+        if path in sources:
+            return
+        active.add(path)
+        text = re.sub(r"(?m)(?<!\\)%[^\n]*", "", path.read_text(encoding="utf-8"))
+        sources[path] = text
+        for name in re.findall(r"\\(?:input|include)\s*\{([^{}]+)\}", text):
+            assert "\\" not in name, f"nonliteral TeX input: {name}"
+            child = root / name
+            if not child.suffix:
+                child = child.with_suffix(".tex")
+            visit(child)
+        active.remove(path)
+
+    visit(source)
+    return sources
+
+
 def is_direct_scholarly_url(url: str) -> bool:
     parsed = urlparse(url)
     if parsed.scheme != "https" or not parsed.netloc:
@@ -112,6 +142,9 @@ def main() -> None:
     assert provenance_readme.exists(), "missing bibliography provenance README"
 
     canonical_bytes = canonical.read_bytes()
+    publisher_present = paper_dir.is_dir()
+    if publisher_present:
+        assert paper_copy.is_file(), "missing publisher bibliography copy"
     if paper_copy.exists():
         assert canonical_bytes == paper_copy.read_bytes(), "paper/artifact bibliography drift"
     text = canonical_bytes.decode("utf-8")
@@ -169,6 +202,8 @@ def main() -> None:
         row["source_tier"] != "institutional_bibliography"
         for row in matrix if int(row["year"]) >= 2024
     ), "recent records require publisher, venue, or direct author/institutional copies"
+    # This retained matrix flag describes the complete artifact audit, not
+    # the shorter publisher supplement's reference selection.
     assert all(row["cited_in_supplement"] == "yes" for row in matrix)
     assert {
         row["bibkey"] for row in matrix if row["cited_in_main"] == "yes"
@@ -179,12 +214,18 @@ def main() -> None:
     sources = {"literature.tex": literature_text, "results.tex": results_text}
     main_path = paper_dir / "main.tex"
     supplement_path = paper_dir / "supplement.tex"
-    main_text = main_path.read_text(encoding="utf-8") if main_path.exists() else ""
-    supplement_text = supplement_path.read_text(encoding="utf-8") if supplement_path.exists() else ""
-    if main_text:
-        sources["main.tex"] = main_text
-    if supplement_text:
-        sources["supplement.tex"] = supplement_text
+    main_sources: dict[Path, str] = {}
+    supplement_sources: dict[Path, str] = {}
+    if publisher_present:
+        main_sources = publisher_sources(paper_dir, main_path)
+        supplement_sources = publisher_sources(paper_dir, supplement_path)
+        proof_path = (paper_dir / SUPPLEMENT_PROOFS).resolve()
+        assert proof_path in supplement_sources, "publisher supplement must include supplement-proofs.tex"
+        assert (artifact / "proofs" / "literature.tex").resolve() not in supplement_sources, (
+            "publisher supplement includes the full artifact literature audit"
+        )
+        sources.update({str(path.relative_to(project.resolve())): source
+                        for path, source in {**main_sources, **supplement_sources}.items()})
     for name, source in sources.items():
         assert "\\nocite" not in source, f"reference padding via nocite in {name}"
 
@@ -193,16 +234,19 @@ def main() -> None:
         f"literature citations differ: missing={sorted(set(blocks)-literature_citations)}, "
         f"extra={sorted(literature_citations-set(blocks))}"
     )
-    main_citations = citation_keys(main_text) if main_text else set(EXPECTED_MAIN)
-    if main_text:
+    main_citations = set().union(*(citation_keys(source) for source in main_sources.values()))
+    supplement_citations = set().union(*(citation_keys(source) for source in supplement_sources.values()))
+    if publisher_present:
         assert main_citations == EXPECTED_MAIN, (
             f"main citations differ: missing={sorted(EXPECTED_MAIN-main_citations)}, "
             f"extra={sorted(main_citations-EXPECTED_MAIN)}"
         )
-    all_tex_citations = literature_citations | citation_keys(results_text) | main_citations
+        assert supplement_citations == EXPECTED_SUPPLEMENT, (
+            f"publisher supplement citations differ: missing={sorted(EXPECTED_SUPPLEMENT-supplement_citations)}, "
+            f"extra={sorted(supplement_citations-EXPECTED_SUPPLEMENT)}"
+        )
+    all_tex_citations = literature_citations | citation_keys(results_text) | main_citations | supplement_citations
     assert all_tex_citations <= set(blocks), "undefined citation key in TeX sources"
-    if supplement_text:
-        assert "\\input{../artifact/proofs/literature}" in supplement_text
 
     external_path = artifact / "external_resources.csv"
     with external_path.open(newline="", encoding="utf-8") as stream:
@@ -222,8 +266,19 @@ def main() -> None:
         "status": "passed",
         "minimum_required": MIN_REFERENCES,
         "bibliography_entries": len(blocks),
-        "main_unique_citations": len(main_citations),
-        "supplement_unique_citations": len(literature_citations),
+        "artifact_audit_unique_citations": len(literature_citations),
+        "artifact_main_selection_count": len(EXPECTED_MAIN),
+        "publisher_documents_validated": publisher_present,
+        "main_unique_citations": len(main_citations) if publisher_present else None,
+        "supplement_unique_citations": len(supplement_citations) if publisher_present else None,
+        "publisher_citation_keys": {
+            "main": sorted(main_citations),
+            "supplement": sorted(supplement_citations),
+        },
+        "publisher_input_files": {
+            "main": sorted(path.relative_to(project.resolve()).as_posix() for path in main_sources),
+            "supplement": sorted(path.relative_to(project.resolve()).as_posix() for path in supplement_sources),
+        },
         "citation_padding_command_used": False,
         "duplicate_keys": 0,
         "duplicate_titles": 0,
