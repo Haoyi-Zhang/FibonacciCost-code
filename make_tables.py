@@ -16,7 +16,7 @@ def main():
         lines.append(f"{NAMES[r['method']]} & {r['rewritten_percent']:.1f} & {r['sum_update_ms']:.2f} & {r['sum_expansions']:,} & {r['sum_total_ms']:.2f}"+r'\\')
     lines += [r'\bottomrule',r'\end{tabular}']
     (out/'results.tex').write_text('\n'.join(lines)+'\n')
-    lines=[r'\begin{landscape}',r'\begin{table}[p]',r'\centering',r'\begin{tabular}{llrrrrrr}',r'\toprule',r'Family & Method & Cases & Written (\%) & Update (ms) & Update+A* (ms) & Ratio to full & Expansions\\',r'\midrule']
+    lines=[r'\begin{landscape}',r'\begin{table}[p]',r'\centering',r'\begin{tabular}{llrrrrrr}',r'\toprule',r'Family & Method & Cases & \shortstack[r]{Written\\(\%)} & \shortstack[r]{Update\\(ms)} & \shortstack[r]{Update+A*\\(ms)} & \shortstack[r]{Ratio to\\full} & Expansions\\',r'\midrule']
     for family in ('independent','coupled','relay'):
         for idx,r in enumerate(x for x in data['aggregates'] if x['family']==family):
             lines.append(f"{family.title() if idx==0 else ''} & {NAMES[r['method']]} & {r['cases']} & {r['rewritten_percent']:.1f} & {r['sum_update_ms']:.3f} & {r['sum_total_ms']:.2f} & {r['total_ratio']:.3f} & {r['sum_expansions']:,}"+r'\\')
