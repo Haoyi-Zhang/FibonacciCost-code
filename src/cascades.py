@@ -69,6 +69,11 @@ def validate_costs(costs: Sequence[int], labels: int) -> tuple[int, ...]:
 
 def distances(g: Graph, costs: Sequence[int], work: Work | None = None) -> tuple[int, ...]:
     c = validate_costs(costs, g.labels)
+    return _distances_validated(g, c, work)
+
+
+def _distances_validated(g: Graph, c: tuple[int, ...], work: Work | None) -> tuple[int, ...]:
+    """Reverse Dijkstra for a cost tuple admitted by the public caller."""
     d: list[int | None] = [None] * g.n
     heap = []
     for goal in set(g.goals):
@@ -101,7 +106,7 @@ def saturation(g: Graph, h: Sequence[int], work: Work | None = None) -> tuple[in
 
 def build_table(g: Graph, offered: Sequence[int], work: Work) -> Table:
     offered = validate_costs(offered, g.labels)
-    h = distances(g, offered, work)
+    h = _distances_validated(g, offered, work)
     sat = saturation(g, h, work)
     if any(x > y for x, y in zip(sat, offered)):
         raise AssertionError('saturation must be feasible')

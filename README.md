@@ -32,15 +32,40 @@ they are not inputs to that publisher supplement.
 
 ## Supported reproduction environment
 
-The supported and verified runtime is **Linux** (a Unix-like environment),
+Current table construction admits the offered cost vector once and passes its
+immutable tuple to a private reverse-Dijkstra kernel. Public `distances` still
+validates on every call. Full rebuilding and both repair modes use the same
+table constructor; table values, allocations and all existing work counters are
+unchanged against the all-edge implementation. This avoids one redundant label traversal, not graph scans or a new
+shortest-path algorithm. Three portable regression methods include all 4,455
+admitted graph/cost combinations in the existing three-state grid, independent
+Bellman--Ford/label-major results, boundary admission and ordered-update controls:
+
+```sh
+python -B -m unittest discover -s tests -p test_prepared_costs.py -v
+```
+
+The scientific workflow explicitly runs this step before its unchanged full
+reproduction. Frozen Linux all-edge and later self-loop-elision measurements
+remain tied to their original sources, before this validation preparation.
+Finite agreement is not a full reproduction or a measured speedup.
+
+The current saturation kernel scans every edge, including self-loops, and its
+work counter records all these scans. Reverse-distance adjacency and support
+still omit self-loops. A self-loop contributes zero to nonnegative saturation,
+but the later frozen self-loop-elision measurements describe a different scan
+implementation, not the current prepared-cost code.
+
+The complete reproduction driver requires **Linux** (a Unix-like environment),
 including native Linux, a Linux container, or Linux running inside WSL2. Use
 CPython 3.10 or later **without `-O` or `PYTHONOPTIMIZE`**. The retained runs
 used CPython 3.13.5 on x86-64 Linux. No Python package installation, internet
 access, downloaded data, planner, or model API is needed.
 
 The scripts intentionally use Python's Unix-only `resource` module. Native
-Windows Python is therefore not supported even when its Python version is new
-enough. On Windows, open a WSL2 Linux distribution, extract or copy the
+Windows Python is therefore not supported for that driver, even when its Python
+version is new enough. The finite regression above is portable. For the full
+driver on Windows, open a WSL2 Linux distribution, extract or copy the
 repository into that Linux environment, and run the commands there with the
 Linux interpreter (commonly `python3`). Do not invoke the runner with Windows
 Python from PowerShell or `cmd.exe`. macOS and BSD are not claimed by this
@@ -99,7 +124,7 @@ The command performs, in order:
 
 `commands.json` records arguments, exit codes, stdout, stderr, wall time, and
 child CPU time. `reproduction.json` records the validated Linux environment and
-final reconciliation. Generated inputs, graphs, costs, work counters, search
+final reconciliation. Generated inputs, graphs, costs, other work counters, search
 outcomes, solution costs, expansions, and generated-node counts must match;
 timing and process measurements are retained separately and need not match.
 
