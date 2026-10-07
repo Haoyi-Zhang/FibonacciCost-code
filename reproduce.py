@@ -119,6 +119,8 @@ def main() -> None:
     run(["tests/check_bibliography.py", "--out", out / "bibliography_validation.json"])
     run(["tests/check_evaluation.py", "--out", out / "evaluation-regressions"])
     run(["tests/check_baselines.py", "--out", out / "baseline_checks.json"])
+    run(["tests/check_saturation.py"])
+    run(["tests/test_saturation_contract.py"])
     run(["pilot.py", "--out", out / "pilot.json"])
     run(["tests/check_all.py", "--out", out / "checks.json"])
     run(["tests/check_amplification.py", "--out", out / "amplification.json"])

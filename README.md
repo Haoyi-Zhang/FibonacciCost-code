@@ -45,8 +45,8 @@ Bellman--Ford/label-major results, boundary admission and ordered-update control
 python -B -m unittest discover -s tests -p test_prepared_costs.py -v
 ```
 
-The scientific workflow explicitly runs this step before its unchanged full
-reproduction. Frozen Linux all-edge and later self-loop-elision measurements
+The scientific workflow explicitly runs this step before its full reproduction,
+whose campaign and reconciliation remain unchanged. Frozen Linux all-edge and later self-loop-elision measurements
 remain tied to their original sources, before this validation preparation.
 Finite agreement is not a full reproduction or a measured speedup.
 
@@ -55,6 +55,32 @@ work counter records all these scans. Reverse-distance adjacency and support
 still omit self-loops. A self-loop contributes zero to nonnegative saturation,
 but the later frozen self-loop-elision measurements describe a different scan
 implementation, not the current prepared-cost code.
+
+`reproduce.py` requires exact equality of every work counter, including
+`saturation_edge_scans`; only its listed timing/resource measurements are
+excluded. `tests/check_saturation.py` checks current all-edge counts, and
+`tests/test_saturation_contract.py` independently checks both scan formulas,
+all other fields/counters, negative controls and the retained cohort's counts.
+The full driver runs both portable checks without running the optional study.
+
+The frozen Windows cohort `results/saturation/saturation.json` remains
+historical. Its exact sources are `results/saturation/sources/cascades.py`
+(SHA256 `2ba4323e6f1cc07e490711deaedb2f01f905ebe59cd39346786a1a488656b912`)
+and `results/saturation/sources/saturation_benchmark.py`
+(SHA256 `186acde40f1ffaff1b8551bd88532f6bd86669809717dae0483b7d30e3d00e92`).
+They are provenance copies, not imported by the checks or production code.
+The optional root `saturation_benchmark.py` now prepares its own non-self-edge
+index and compares that distinct historical kernel with current all-edge
+saturation, restoring the production function on failure. Its index creation
+remains outside measured arms; table updates and search limits are unchanged.
+Any newly generated timing describes that explicit optional comparison, not
+the frozen cohort or a measured improvement to current prepared-cost code.
+Portable checks do not rerun its timings or the Linux reproduction:
+
+```sh
+python -B tests/test_saturation_contract.py
+python -B tests/check_saturation.py
+```
 
 The complete reproduction driver requires **Linux** (a Unix-like environment),
 including native Linux, a Linux container, or Linux running inside WSL2. Use
@@ -124,7 +150,7 @@ The command performs, in order:
 
 `commands.json` records arguments, exit codes, stdout, stderr, wall time, and
 child CPU time. `reproduction.json` records the validated Linux environment and
-final reconciliation. Generated inputs, graphs, costs, other work counters, search
+final reconciliation. Generated inputs, graphs, costs, all work counters, search
 outcomes, solution costs, expansions, and generated-node counts must match;
 timing and process measurements are retained separately and need not match.
 
