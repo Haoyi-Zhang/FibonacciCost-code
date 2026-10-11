@@ -25,6 +25,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p scientific-output
+          timeout --signal=TERM --kill-after=5s 40s python -B tests/test_bibliography.py -v
           timeout --signal=TERM --kill-after=5s 40s python -B -m unittest discover -s tests -p test_prepared_costs.py -v > scientific-output/prepared-costs.stdout.txt 2> scientific-output/prepared-costs.stderr.txt
       - name: Run owned finite checks and frozen synthetic reproduction
         shell: bash

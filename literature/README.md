@@ -1,8 +1,8 @@
-# Bibliography provenance and version policy
+# Bibliography provenance
 
-`references.bib` is the canonical 65-record bibliography. `../literature_matrix.csv`
-records why each work is in scope, its reading depth, a direct verification source,
-a stable identifier, and any edition-level ambiguity. `../external_resources.csv`
+`references.bib` is the canonical 65-work bibliography. `../literature_matrix.csv`
+retains the earlier literature audit's scope, reading depth, verification sources
+and edition notes. `../external_resources.csv`
 mirrors the scholarly URLs for provenance accounting.
 
 Source tiers are deliberately explicit:
@@ -24,13 +24,14 @@ Two historical cases matter:
    84--90. ECP pre-proceedings and later bibliographies also cite 13--24. The
    project uses the AAAI proceedings copy and records the alternate pagination.
 2. **Edelkamp/MoChArt.** The workshop was held in 2006, while Springer formally
-   published the LNAI 4428 chapter in 2007. The BibTeX year is therefore 2007 and
-   the book title keeps “MoChArt 2006.”
+   published the LNCS 4428 chapter in 2007. The BibTeX year is therefore 2007;
+   the formal book title is *Model Checking and Artificial Intelligence*.
 
 The 2025 *Merging Cartesian Abstractions* record also has a one-page terminal
 range discrepancy across publisher/repository exports; the DOI, title, authors,
 and proceedings identity agree, and the matrix states which pagination is retained.
 
-The automatic bibliography check validates internal consistency and provenance
-fields. It cannot prove global novelty, replace source reading, or certify that no
-uncatalogued equivalent result exists.
+`main-citations.txt` lists the 52 main-text selections; the essential supplement
+cites 2 works. `../tests/check_bibliography.py` checks parsed bibliography identity
+and follows actual publisher inputs when available. Earlier reading-depth records
+are not upgraded by this bibliographic/targeted-context update.

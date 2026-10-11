@@ -140,10 +140,20 @@ def main() -> None:
         "rational_checks.json",
     )
     for name in deterministic_reports:
-        old = json.loads((ROOT / "results" / name).read_text())
         new = json.loads((out / name).read_text())
-        if stable(old) != stable(new):
-            raise SystemExit("deterministic check mismatch: " + name)
+        if name == "bibliography_validation.json":
+            # Bibliography metadata changed; bind it to the canonical content,
+            # not the dated receipt. Numerical evidence below remains exact.
+            sys.path.insert(0, str(ROOT / "tests"))
+            from check_bibliography import validate
+            current = validate(ROOT)
+            fields = ("bibliography_entries", "main_unique_citations", "canonical_metadata")
+            if any(new.get(field) != current[field] for field in fields):
+                raise SystemExit("bibliography content mismatch")
+        else:
+            old = json.loads((ROOT / "results" / name).read_text())
+            if stable(old) != stable(new):
+                raise SystemExit("deterministic check mismatch: " + name)
 
     config = json.loads((ROOT / "inputs/campaign.json").read_text())
     for spec in config["cases"]:

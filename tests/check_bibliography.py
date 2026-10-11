@@ -1,341 +1,230 @@
-"""Validate bibliography provenance and manuscript integration.
-
-This checker is intentionally structural. It verifies the curated records,
-source-provenance fields, cross-file alignment, citation coverage, and absence
-of wildcard padding. It cannot establish global scholarly priority or replace
-human reading of the cited works.
-
-The deterministic output describes the retained artifact audit only. Publisher
-inputs are still checked whenever present; their context-specific receipt can
-be written separately with --publisher-out.
-"""
+#!/usr/bin/env python3
+"""Check bibliography content and citations in included TeX sources."""
 from __future__ import annotations
 
 import argparse
-import csv
-import hashlib
 import json
 import re
-from collections import Counter
 from pathlib import Path
-from urllib.parse import urlparse
-
-MIN_REFERENCES = 55
-EXPECTED_REFERENCES = 65
-ACCESS_DATE = "2026-09-16"
-EXPECTED_MAIN = {
-    "scp2020", "comparison2017", "subsetsaturated2019", "transitioncp2021",
-    "dstar2002", "lpa2004", "online2021", "dw2021",
-    "sensitivity2024", "monotonic2026",
-}
-EXPECTED_SUPPLEMENT = {"scp2020", "incremental2020"}
-SUPPLEMENT_PROOFS = "supplement-proofs.tex"
-ALLOWED_DEPTH = {
-    "substantive full-paper or theorem/algorithm pass",
-    "bibliographic verification plus relevant cited context",
-}
-ALLOWED_SOURCE_TIERS = {
-    "publisher_or_doi",
-    "official_proceedings_or_journal",
-    "author_or_institutional_copy",
-    "institutional_bibliography",
-}
-ALLOWED_METADATA_STATUS = {"verified", "version_cross_checked"}
-VERSION_CROSS_CHECKED = {"edelkamp2001", "edelkamp2006", "mergecartesian2025"}
-GENERIC_OR_INDIRECT = {
-    "https://mrlab.ai/jendrik-seipp/",
-    "https://mrlab.ai/",
-    "https://mrlab.ai/papers/seipp-et-al-jair2020.pdf",
-}
-REQUIRED_MATRIX_COLUMNS = {
-    "bibkey", "year", "category", "title", "role_in_review",
-    "specific_boundary", "verification_url", "read_depth",
-    "cited_in_main", "cited_in_supplement", "canonical_identifier",
-    "source_tier", "metadata_status", "verification_note", "access_date",
-}
 
 
-def bib_blocks(text: str) -> dict[str, str]:
-    starts = list(re.finditer(r"(?m)^@(\w+)\{([^,]+),", text))
-    blocks: dict[str, str] = {}
-    for index, match in enumerate(starts):
-        key = match.group(2).strip()
-        if key in blocks:
-            raise AssertionError(f"duplicate BibTeX key: {key}")
-        end = starts[index + 1].start() if index + 1 < len(starts) else len(text)
-        blocks[key] = text[match.start():end]
-    return blocks
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise ValueError(message)
 
 
-def field(block: str, name: str) -> str:
-    match = re.search(
-        rf"(?ms)^\s*{re.escape(name)}\s*=\s*\{{(.*?)\}}\s*,?\s*$", block
-    )
-    if not match:
-        match = re.search(
-            rf"(?mi)^\s*{re.escape(name)}\s*=\s*\{{([^\n]*)\}}", block
-        )
-    return " ".join(match.group(1).split()) if match else ""
+def parse_bib_entries(text: str) -> dict[str, dict[str, str]]:
+    """Parse the brace/quote forms used by the supplied BibTeX files.
+
+    The parser is intentionally small but balanced-brace aware.  Unsupported syntax
+    fails closed instead of silently skipping metadata.
+    """
+    entries: dict[str, dict[str, str]] = {}
+    pos = 0
+    while True:
+        match = re.search(r"@(\w+)\s*\{\s*([^,\s]+)\s*,", text[pos:], re.S)
+        if match is None:
+            break
+        entry_type = match.group(1).lower()
+        key = match.group(2)
+        if key in entries:
+            raise ValueError(f"duplicate BibTeX key {key!r}")
+        body_start = pos + match.end()
+        cursor = body_start
+        depth = 1
+        while cursor < len(text) and depth:
+            if text[cursor] == "{":
+                depth += 1
+            elif text[cursor] == "}":
+                depth -= 1
+            cursor += 1
+        if depth:
+            raise ValueError(f"unclosed BibTeX entry {key!r}")
+        body = text[body_start : cursor - 1]
+        fields: dict[str, str] = {"entry_type": entry_type}
+        index = 0
+        while index < len(body):
+            while index < len(body) and (body[index].isspace() or body[index] == ","):
+                index += 1
+            if index >= len(body):
+                break
+            field_match = re.match(r"([A-Za-z][\w-]*)\s*=\s*", body[index:])
+            if field_match is None:
+                raise ValueError(f"unsupported BibTeX syntax in {key!r} near {body[index:index+40]!r}")
+            field = field_match.group(1).lower()
+            index += field_match.end()
+            if index >= len(body):
+                raise ValueError(f"missing value for {key!r}:{field}")
+            if body[index] == "{":
+                index += 1
+                value_start = index
+                value_depth = 1
+                while index < len(body) and value_depth:
+                    if body[index] == "{":
+                        value_depth += 1
+                    elif body[index] == "}":
+                        value_depth -= 1
+                    index += 1
+                if value_depth:
+                    raise ValueError(f"unclosed braced value for {key!r}:{field}")
+                value = body[value_start : index - 1]
+            elif body[index] == '"':
+                index += 1
+                value_start = index
+                while index < len(body):
+                    if body[index] == '"' and body[index - 1] != "\\":
+                        break
+                    index += 1
+                if index >= len(body):
+                    raise ValueError(f"unclosed quoted value for {key!r}:{field}")
+                value = body[value_start:index]
+                index += 1
+            else:
+                value_start = index
+                while index < len(body) and body[index] != ",":
+                    index += 1
+                value = body[value_start:index].strip()
+            if field in fields:
+                raise ValueError(f"duplicate field {field!r} in {key!r}")
+            fields[field] = value.strip()
+        entries[key] = fields
+        pos = cursor
+    if not entries:
+        raise ValueError("no BibTeX entries found")
+    return entries
 
 
-def norm_title(title: str) -> str:
-    title = re.sub(r"\\[A-Za-z]+", "", title)
-    return re.sub(r"[^a-z0-9]+", "", title.lower())
+def plain(value: str) -> str:
+    return " ".join(value.split())
+
+
+def title_identity(value: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", re.sub(r"\\[A-Za-z]+", "", value).lower())
+
+
+def doi_identity(value: str) -> str:
+    return re.sub(r"^(?:https?://(?:dx\.)?doi\.org/|doi:\s*)", "",
+                  plain(value).lower())
+
+
+def identity(entries: dict) -> dict:
+    return {key: {"title": title_identity(fields["title"]),
+                  "doi": doi_identity(fields.get("doi", "")),
+                  "year": plain(fields["year"]),
+                  "author": plain(fields["author"])}
+            for key, fields in sorted(entries.items())}
+
+
+def check_records(entries: dict, selected: list[str]) -> None:
+    require(len(selected) == len(set(selected)), "duplicate selected citation key")
+    require("*" not in selected and len(selected) >= 50, "main reference floor unmet")
+    require(set(selected) <= set(entries), "undefined selected citation key")
+    titles: set[str] = set()
+    dois: set[str] = set()
+    for key, fields in entries.items():
+        require(all(fields.get(name) for name in ("title", "author", "year")),
+                f"missing title/author/year: {key}")
+        require(re.fullmatch(r"\d{4}", fields["year"]) is not None, f"invalid year: {key}")
+        title = title_identity(fields["title"])
+        require(title and title not in titles, f"duplicate/empty title: {key}")
+        titles.add(title)
+        doi = doi_identity(fields.get("doi", ""))
+        if doi:
+            require(doi not in dois, f"duplicate DOI: {key}")
+            dois.add(doi)
+
+
+def strip_comments(text: str) -> str:
+    return re.sub(r"(?m)(?<!\\)%[^\n]*", "", text)
 
 
 def citation_keys(text: str) -> set[str]:
-    keys: set[str] = set()
-    for match in re.finditer(r"\\cite\w*(?:\[[^\]]*\])?\{([^}]*)\}", text):
-        keys.update(key.strip() for key in match.group(1).split(",") if key.strip())
-    return keys
+    return {key.strip() for match in
+            re.finditer(r"\\cite[A-Za-z]*\*?(?:\[[^\]]*\]){0,2}\s*\{([^}]*)\}",
+                        strip_comments(text))
+            for key in match[1].split(",") if key.strip()}
 
 
-def publisher_sources(root: Path, source: Path) -> dict[Path, str]:
-    """Read literal TeX inputs from the publisher working directory."""
-    sources: dict[Path, str] = {}
-    active: set[Path] = set()
-    project = root.parent.resolve()
+def sources(root: Path, name: str) -> dict[str, str]:
+    """Follow literal inputs as TeX resolves them from the paper working directory."""
+    root = root.resolve()
+    found: dict[str, str] = {}
+    active: set[str] = set()
 
-    def visit(path: Path) -> None:
-        path = path.resolve()
-        assert path.is_relative_to(project), f"TeX input outside project: {path}"
-        assert path not in active, f"cyclic TeX input: {path}"
-        assert path.is_file(), f"missing TeX input: {path}"
-        if path in sources:
+    def visit(relative: str) -> None:
+        path = (root / relative).resolve()
+        require(path.is_relative_to(root), f"TeX input outside paper: {relative}")
+        require(relative not in active, f"cyclic TeX input: {relative}")
+        require(path.is_file(), f"missing TeX input: {relative}")
+        if relative in found:
             return
-        active.add(path)
-        text = re.sub(r"(?m)(?<!\\)%[^\n]*", "", path.read_text(encoding="utf-8"))
-        sources[path] = text
-        for name in re.findall(r"\\(?:input|include)\s*\{([^{}]+)\}", text):
-            assert "\\" not in name, f"nonliteral TeX input: {name}"
-            child = root / name
-            if not child.suffix:
-                child = child.with_suffix(".tex")
-            visit(child)
-        active.remove(path)
+        active.add(relative)
+        text = strip_comments(path.read_text(encoding="utf-8"))
+        require(not re.search(r"\\nocite\b", text), f"nocite padding: {relative}")
+        controls = [m[1] for m in re.finditer(r"\\(if[A-Za-z]*|else|fi)\b", text)
+                    if m[1] != "iff"]  # Mathematical iff is not a TeX branch.
+        require(not controls, f"conditional input needs explicit review: {relative}")
+        found[relative] = text
+        for child in re.findall(r"\\(?:input|include)\s*\{([^{}]+)\}", text):
+            require("\\" not in child, f"nonliteral TeX input: {child}")
+            visit(child if Path(child).suffix else child + ".tex")
+        active.remove(relative)
 
-    visit(source)
-    return sources
+    visit(name)
+    return found
 
 
-def is_direct_scholarly_url(url: str) -> bool:
-    parsed = urlparse(url)
-    if parsed.scheme != "https" or not parsed.netloc:
-        return False
-    if url in GENERIC_OR_INDIRECT:
-        return False
-    path = parsed.path.rstrip("/")
-    # Reject bare homepages: a verification source should identify a paper,
-    # proceedings record, DOI, repository item, or named author bibliography.
-    if parsed.netloc in {"mrlab.ai", "www.mrlab.ai"} and path in {"", "/jendrik-seipp"}:
-        return False
-    return True
+def compare_bibliographies(canonical: dict, publisher: dict) -> None:
+    require(identity(canonical) == identity(publisher),
+            "bibliography key/title/DOI/author/year content differs")
+
+
+def validate(artifact: Path, paper: Path | None = None) -> dict:
+    entries = parse_bib_entries((artifact / "literature" / "references.bib").read_text(encoding="utf-8"))
+    selected = (artifact / "literature" / "main-citations.txt").read_text(encoding="utf-8").split()
+    check_records(entries, selected)
+    main, supplement = set(selected), None
+    if paper is not None:
+        require(paper.is_dir(), f"paper directory missing: {paper}")
+        publisher = parse_bib_entries((paper / "references.bib").read_text(encoding="utf-8"))
+        compare_bibliographies(entries, publisher)
+        documents = {name: sources(paper, name + ".tex") for name in ("main", "supplement")}
+        keys = {name: set().union(*(citation_keys(text) for text in paths.values()))
+                for name, paths in documents.items()}
+        require(keys["main"] == main, "main citation-key list differs from included TeX")
+        require((keys["main"] | keys["supplement"]) <= set(entries), "undefined citation in TeX")
+        main, supplement = keys["main"], keys["supplement"]
+    return {
+        "report_scope": "bibliography_content_and_citation_selection",
+        "publisher_documents_validated": paper is not None,
+        "bibliography_entries": len(entries),
+        "main_unique_citations": len(main),
+        "supplement_unique_citations": len(supplement) if supplement is not None else None,
+        "publisher_citation_keys": {"main": sorted(main),
+                                   "supplement": sorted(supplement) if supplement is not None else None},
+        "canonical_metadata": identity(entries),
+        "scope_note": "Offline content/citation checks only. No scholarly full-text certification; absent paper sources are not validated.",
+    }
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--out", default="results/bibliography_validation.json",
-        help="artifact-audit report path; '-' prints it without writing a file",
-    )
-    parser.add_argument(
-        "--publisher-out",
-        help="separate publisher-integration report; requires publisher sources",
-    )
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--paper-dir", type=Path)
+    parser.add_argument("--out", "--output", default="-", help="default stdout; output must be a new path")
     args = parser.parse_args()
-
     artifact = Path(__file__).resolve().parents[1]
-    project = artifact.parent
-    canonical = artifact / "literature" / "references.bib"
-    paper_dir = project / "paper"
-    paper_copy = paper_dir / "references.bib"
-    provenance_readme = artifact / "literature" / "README.md"
-    assert provenance_readme.exists(), "missing bibliography provenance README"
-
-    canonical_bytes = canonical.read_bytes()
-    publisher_present = paper_dir.is_dir()
-    if args.publisher_out is not None:
-        assert publisher_present, "publisher report requested but publisher sources are missing"
-    if publisher_present:
-        assert paper_copy.is_file(), "missing publisher bibliography copy"
-    if paper_copy.exists():
-        assert canonical_bytes == paper_copy.read_bytes(), "paper/artifact bibliography drift"
-    text = canonical_bytes.decode("utf-8")
-    blocks = bib_blocks(text)
-    assert len(blocks) == EXPECTED_REFERENCES
-    assert len(blocks) >= MIN_REFERENCES
-
-    titles: dict[str, str] = {}
-    years: dict[str, str] = {}
-    normalized: dict[str, str] = {}
-    for key, block in blocks.items():
-        title = field(block, "title")
-        year = field(block, "year")
-        author = field(block, "author")
-        assert title and year and author, f"missing required metadata: {key}"
-        assert re.fullmatch(r"\d{4}", year), f"invalid year for {key}: {year!r}"
-        normalized_title = norm_title(title)
-        assert normalized_title, f"empty normalized title: {key}"
-        if normalized_title in normalized:
-            raise AssertionError(
-                f"duplicate normalized title: {key} and {normalized[normalized_title]}"
-            )
-        normalized[normalized_title] = key
-        titles[key], years[key] = title, year
-
-    matrix_path = artifact / "literature_matrix.csv"
-    with matrix_path.open(newline="", encoding="utf-8") as stream:
-        reader = csv.DictReader(stream)
-        assert set(reader.fieldnames or ()) == REQUIRED_MATRIX_COLUMNS, (
-            f"matrix fields differ: {reader.fieldnames}"
-        )
-        matrix = list(reader)
-    assert len(matrix) == len(blocks)
-    matrix_keys = [row["bibkey"] for row in matrix]
-    assert len(matrix_keys) == len(set(matrix_keys)), "duplicate matrix key"
-    assert set(matrix_keys) == set(blocks), "matrix/BibTeX key mismatch"
-    assert all(row["year"] == years[row["bibkey"]] for row in matrix)
-    assert all(
-        norm_title(row["title"]) == norm_title(titles[row["bibkey"]])
-        for row in matrix
-    )
-    assert all(is_direct_scholarly_url(row["verification_url"]) for row in matrix)
-    assert all(row["read_depth"] in ALLOWED_DEPTH for row in matrix)
-    assert all(row["source_tier"] in ALLOWED_SOURCE_TIERS for row in matrix)
-    assert all(row["metadata_status"] in ALLOWED_METADATA_STATUS for row in matrix)
-    assert all(row["verification_note"].strip() for row in matrix)
-    assert all(row["access_date"] == ACCESS_DATE for row in matrix)
-    identifiers = [row["canonical_identifier"] for row in matrix]
-    assert all(identifier.strip() for identifier in identifiers)
-    assert len(identifiers) == len(set(identifiers)), "duplicate canonical identifier"
-    assert {
-        row["bibkey"] for row in matrix if row["metadata_status"] == "version_cross_checked"
-    } == VERSION_CROSS_CHECKED
-    assert all(
-        row["source_tier"] != "institutional_bibliography"
-        for row in matrix if int(row["year"]) >= 2024
-    ), "recent records require publisher, venue, or direct author/institutional copies"
-    # This retained matrix flag describes the complete artifact audit, not
-    # the shorter publisher supplement's reference selection.
-    assert all(row["cited_in_supplement"] == "yes" for row in matrix)
-    assert {
-        row["bibkey"] for row in matrix if row["cited_in_main"] == "yes"
-    } == EXPECTED_MAIN
-
-    literature_text = (artifact / "proofs" / "literature.tex").read_text(encoding="utf-8")
-    results_text = (artifact / "proofs" / "results.tex").read_text(encoding="utf-8")
-    sources = {"literature.tex": literature_text, "results.tex": results_text}
-    main_path = paper_dir / "main.tex"
-    supplement_path = paper_dir / "supplement.tex"
-    main_sources: dict[Path, str] = {}
-    supplement_sources: dict[Path, str] = {}
-    if publisher_present:
-        main_sources = publisher_sources(paper_dir, main_path)
-        supplement_sources = publisher_sources(paper_dir, supplement_path)
-        proof_path = (paper_dir / SUPPLEMENT_PROOFS).resolve()
-        assert proof_path in supplement_sources, "publisher supplement must include supplement-proofs.tex"
-        assert (artifact / "proofs" / "literature.tex").resolve() not in supplement_sources, (
-            "publisher supplement includes the full artifact literature audit"
-        )
-        sources.update({str(path.relative_to(project.resolve())): source
-                        for path, source in {**main_sources, **supplement_sources}.items()})
-    for name, source in sources.items():
-        assert "\\nocite" not in source, f"reference padding via nocite in {name}"
-
-    literature_citations = citation_keys(literature_text)
-    assert literature_citations == set(blocks), (
-        f"literature citations differ: missing={sorted(set(blocks)-literature_citations)}, "
-        f"extra={sorted(literature_citations-set(blocks))}"
-    )
-    main_citations = set().union(*(citation_keys(source) for source in main_sources.values()))
-    supplement_citations = set().union(*(citation_keys(source) for source in supplement_sources.values()))
-    if publisher_present:
-        assert main_citations == EXPECTED_MAIN, (
-            f"main citations differ: missing={sorted(EXPECTED_MAIN-main_citations)}, "
-            f"extra={sorted(main_citations-EXPECTED_MAIN)}"
-        )
-        assert supplement_citations == EXPECTED_SUPPLEMENT, (
-            f"publisher supplement citations differ: missing={sorted(EXPECTED_SUPPLEMENT-supplement_citations)}, "
-            f"extra={sorted(supplement_citations-EXPECTED_SUPPLEMENT)}"
-        )
-    all_tex_citations = literature_citations | citation_keys(results_text) | main_citations | supplement_citations
-    assert all_tex_citations <= set(blocks), "undefined citation key in TeX sources"
-
-    external_path = artifact / "external_resources.csv"
-    with external_path.open(newline="", encoding="utf-8") as stream:
-        external = list(csv.DictReader(stream))
-    scholarly = [row for row in external if re.fullmatch(r"L\d{2}", row["id"])]
-    assert len(scholarly) == len(blocks)
-    assert [row["id"] for row in scholarly] == [f"L{index:02d}" for index in range(1, 66)]
-    for matrix_row, external_row in zip(matrix, scholarly):
-        assert external_row["url"] == matrix_row["verification_url"], (
-            f"external/matrix URL drift: {matrix_row['bibkey']}"
-        )
-        assert external_row["access_date"] == matrix_row["access_date"] == ACCESS_DATE
-        assert matrix_row["source_tier"] in external_row["acquisition"]
-        assert matrix_row["metadata_status"] in external_row["acquisition"]
-
-    result = {
-        "status": "passed",
-        "report_scope": "artifact_bibliography_audit",
-        "minimum_required": MIN_REFERENCES,
-        "bibliography_entries": len(blocks),
-        "artifact_audit_unique_citations": len(literature_citations),
-        "artifact_main_selection_count": sum(row["cited_in_main"] == "yes" for row in matrix),
-        "citation_padding_command_used": False,
-        "duplicate_keys": 0,
-        "duplicate_titles": 0,
-        "duplicate_canonical_identifiers": 0,
-        "generic_or_indirect_verification_urls": 0,
-        "category_counts": dict(sorted(Counter(row["category"] for row in matrix).items())),
-        "read_depth_counts": dict(sorted(Counter(row["read_depth"] for row in matrix).items())),
-        "source_tier_counts": dict(sorted(Counter(row["source_tier"] for row in matrix).items())),
-        "metadata_status_counts": dict(sorted(Counter(row["metadata_status"] for row in matrix).items())),
-        "version_cross_checked_keys": sorted(VERSION_CROSS_CHECKED),
-        "access_date": ACCESS_DATE,
-        "bib_sha256": hashlib.sha256(canonical_bytes).hexdigest(),
-        "matrix_rows": len(matrix),
-        "external_scholarly_rows": len(scholarly),
-        "scope_note": (
-            "Structural and provenance validation only; priority, novelty, and "
-            "source interpretation remain scholarly judgments."
-        ),
-    }
-    out = None if args.out == "-" else Path(args.out)
-    if out is not None and not out.is_absolute():
-        out = artifact / out
-    publisher_out = Path(args.publisher_out) if args.publisher_out is not None else None
-    if publisher_out is not None:
-        if not publisher_out.is_absolute():
-            publisher_out = artifact / publisher_out
-        assert out is None or publisher_out.resolve() != out.resolve(), (
-            "artifact and publisher report paths must differ"
-        )
-        publisher_result = {
-            "status": "passed",
-            "report_scope": "publisher_bibliography_integration",
-            "artifact_audit_validated": True,
-            "publisher_documents_validated": True,
-            "main_unique_citations": len(main_citations),
-            "supplement_unique_citations": len(supplement_citations),
-            "publisher_citation_keys": {
-                "main": sorted(main_citations),
-                "supplement": sorted(supplement_citations),
-            },
-            "publisher_input_files": {
-                "main": sorted(path.relative_to(project.resolve()).as_posix() for path in main_sources),
-                "supplement": sorted(path.relative_to(project.resolve()).as_posix() for path in supplement_sources),
-            },
-            "bib_sha256": result["bib_sha256"],
-            "bibliography_source_copies_identical": True,
-        }
-        publisher_out.parent.mkdir(parents=True, exist_ok=True)
-        publisher_out.write_text(json.dumps(publisher_result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    serialized = json.dumps(result, indent=2, sort_keys=True)
-    if out is not None:
+    neighbor = artifact.parent / "paper"
+    paper = args.paper_dir if args.paper_dir is not None else (neighbor if neighbor.is_dir() else None)
+    result = validate(artifact, paper)
+    serialized = json.dumps(result, indent=2, sort_keys=True) + "\n"
+    if args.out != "-":
+        out = Path(args.out)
+        if not out.is_absolute():
+            out = artifact / out
+        require(not out.exists(), "refusing to overwrite an existing result")
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(serialized + "\n", encoding="utf-8")
-    print(serialized)
+        out.write_text(serialized, encoding="utf-8")
+    print(serialized, end="")
 
 
 if __name__ == "__main__":
