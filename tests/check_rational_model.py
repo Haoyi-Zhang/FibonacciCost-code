@@ -27,7 +27,6 @@ from typing import Iterable
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 from platform_support import require_supported_environment
-resource = require_supported_environment('tests/check_rational_model.py')
 
 Q = Fraction
 
@@ -295,6 +294,7 @@ def check_fractional_reuse_characterization() -> dict[str, int]:
 
 
 def main(output: str) -> None:
+    resource = require_supported_environment('tests/check_rational_model.py')
     cpu_start = time.process_time()
     wall_start = time.perf_counter()
     onset = check_fractional_onset()

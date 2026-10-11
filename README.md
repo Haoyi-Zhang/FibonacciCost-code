@@ -25,10 +25,46 @@ bounded 65-source collision audit is in `proofs/literature.tex`, with structured
 metadata in `literature_matrix.csv` and canonical BibTeX in
 `literature/references.bib`.
 In the current full project archive, the publisher submission uses 52 references in
-`../paper/main.tex` and 2 in the essential-proof supplement,
+`../paper/main.tex` and 2 in the additional-proof supplement,
 `../paper/supplement.tex`, whose body is `../paper/supplement-proofs.tex`.
 The full artifact proof and literature-audit sources remain available here;
-they are not inputs to that publisher supplement.
+they are not inputs to that publisher supplement. The main note contains the
+full support-two transition proof, parity induction, initializer/carry/cleanup
+construction, and exact-reuse/ordered-repair argument without essential-proof
+deferral.
+
+Residual amplification, changed tables, heuristic values and concrete optimal
+costs are different quantities. In the supplied amplifier, the all-zero-start
+heuristic and optimum both fall by one, even when the final residual
+difference is `F_(k+3)`: the changed label followed by all fresh `z` labels
+is a goal plan matching each heuristic lower bound. At `k=0`, state `(1,0,1)`,
+the heuristic rises from 0 to 1 while the optimum stays 1. Largest-cost bit
+width is `Theta(k)`; no constant-bit exponential-magnitude claim follows.
+Support at most two is required after every table, not just at the endpoints
+and not inferred from bounded action incidence.
+
+## Portable proof arithmetic and quantity checks
+
+The following untimed command supports Windows and Linux CPython 3.10 or
+later, with assertions enabled. Choose a new result path on every run:
+
+```sh
+python -B tests/check_fibonacci_core.py --out results/fibonacci_core-new.json
+```
+
+It reruns 1,849 integer and 1,849 fractional support transitions, 6,006
+parity inequalities through `k=1000`, the envelope through 17 tables,
+337,500 rational onset cases, and 40,095 rational reuse pairs. It also checks
+old/new partitions and the matching goal plans of the nine existing witnesses
+through `k=64`. Ten independent tiny concrete-optimum checks enumerate action
+subsets: both all-zero-start cost vectors for `k=0,1,2,3`, and both costs at
+state `(1,0,1)` for `k=0`. Subset coverage is exact only for the bit-setting
+actions used here, which commute, are idempotent, and have nonnegative costs.
+The actual retained run is `results/fibonacci_core.json` (Windows CPython
+3.12.14). It is a proof-arithmetic and quantity regression, not an added timing
+benchmark or a reproduction of the frozen Linux measurements. Original
+resource-reporting entry points retain their Linux checks; their pure arithmetic
+functions are importable without taking resource measurements.
 
 ## Supported reproduction environment
 
@@ -193,6 +229,9 @@ runs sequential bounded children. Raw outputs are retained even after failure.
 - `tests/check_rational_model.py`: independent `Fraction`-arithmetic checks of
   the real-valued onset, support-two transition, and exact-reuse boundaries; it
   imports none of the candidate implementation.
+- `tests/check_fibonacci_core.py`: portable untimed arithmetic and actual
+  extremal-witness checks, matching concrete goal plans, and tiny independent
+  subset-optimum comparisons that distinguish residual and heuristic changes.
 - `tests/check_bibliography.py`: checks canonical bibliography content, the
   selected main citation keys, duplicates and unresolved citations. With publisher
   sources present, it follows literal TeX inputs and compares parsed metadata.

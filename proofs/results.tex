@@ -142,7 +142,31 @@ For cleanup, introduce one fresh label $z$ of cost $A$ and append $\{x,z\}$ and 
 
 All labels have goal self-loops in both the relay and amplifier. Their maximum edge difference is therefore already nonnegative. These witnesses also apply when the saturation formula is not explicitly clipped at zero. The general update implementation is nevertheless restricted to nonnegative residuals and allocations.
 
-The amplification is exponential in the number of patterns, but it measures absolute residual sensitivity rather than optimal plan cost, search expansions, or running time. Its input bit width is $\lceil\log_2(F_{k+3}+1)\rceil=\Theta(k)$. Explicit table materialization and self-loop expansion can still dominate representation size; no upper bound is asserted once difference support can exceed two or for abstractions with more than two states.
+The amplification is exponential in the number of patterns, but it measures
+absolute residual sensitivity rather than optimal plan cost, search expansions,
+or running time. At the all-zero start, table-value changes $-1$ and pairs
+$+A,-A$ sum to $-1$. Applying $d$ and all fresh $z$ labels covers every
+variable at a cost equal to the old heuristic sum; the same plan costs one
+less after the update. Admissibility thus proves that the old and new
+concrete optima equal those sums. At $k=0$ and state $(1,0,1)$, the
+heuristic instead rises from zero to one, while the optimum stays one because
+$x$ or $z$ supplies the only missing variable for one under either cost vector.
+
+Largest-cost bit width is $\lceil\log_2(F_{k+3}+1)\rceil=\Theta(k)$,
+not constant. Every nonnegative residual coordinate stays below its original
+input cost; hence any two integer inputs with costs at most $2^b-1$ have
+residual differences at most $2^b-1$. The witness stores $O(k^2)$ cost bits
+and has $O(k^2)$ materialized edges including self-loops. Arithmetic must
+account for bit width. No upper bound is asserted once difference support
+can exceed two or for abstractions with more than two states.
+
+The portable untimed checker \texttt{tests/check\_fibonacci\_core.py}
+checks the supplied extremal witnesses, their matching goal plans, and ten
+tiny concrete-optimum comparisons by exhaustive action-subset coverage.
+This is exact for nonnegative, commuting, idempotent bit-setting actions;
+it is not an optimum solver for general planning tasks. Its result is
+\texttt{results/fibonacci\_core.json}. The main note includes the complete
+core proof; these details and finite tests do not extend its domain.
 
 \section{An Exact Reuse Boundary and Ordered Repair}
 Let $h=\operatorname{dist}_r$ be an old exact, finite table in a fixed graph, $s$ its nonnegative saturation, and $q\geq0$ the new incoming residual. Define the new tight-edge graph by

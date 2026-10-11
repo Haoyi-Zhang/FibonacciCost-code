@@ -8,7 +8,8 @@ uses only the difference update
 where min_B d <= mu <= max_B d.  Allowing every integer mu in that interval is
 an over-approximation of realizable minimum changes, so passing the checks is a
 strong finite sanity test; the unbounded real-valued claim is proved in the
-supplement, not by enumeration.
+main note and proof source, not by enumeration. Pure arithmetic functions can
+also be imported on Windows; the resource-reporting entry point remains Linux.
 """
 from __future__ import annotations
 
@@ -20,7 +21,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 from platform_support import require_supported_environment
-resource = require_supported_environment('tests/check_support_envelope.py')
 
 
 def fibonacci(index: int) -> int:
@@ -158,6 +158,7 @@ def check_reachable_envelope(horizon: int) -> tuple[list[dict[str, int | bool]],
 
 
 def main(output: str, limit: int, horizon: int, max_k: int) -> None:
+    resource = require_supported_environment('tests/check_support_envelope.py')
     cpu_start = time.process_time()
     wall_start = time.perf_counter()
     transition_checks, by_transition = check_transition_inequalities(limit)
