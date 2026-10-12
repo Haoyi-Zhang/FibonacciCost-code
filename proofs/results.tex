@@ -160,12 +160,12 @@ and has $O(k^2)$ materialized edges including self-loops. Arithmetic must
 account for bit width. No upper bound is asserted once difference support
 can exceed two or for abstractions with more than two states.
 
-The portable untimed checker \texttt{tests/check\_fibonacci\_core.py}
+The portable untimed proof-arithmetic runner
 checks the supplied extremal witnesses, their matching goal plans, and ten
 tiny concrete-optimum comparisons by exhaustive action-subset coverage.
 This is exact for nonnegative, commuting, idempotent bit-setting actions;
-it is not an optimum solver for general planning tasks. Its result is
-\texttt{results/fibonacci\_core.json}. The main note includes the complete
+it is not an optimum solver for general planning tasks. The artifact retains
+its exact-arithmetic and concrete-optimum results. The main note includes the complete
 core proof; these details and finite tests do not extend its domain.
 
 \section{An Exact Reuse Boundary and Ordered Repair}
@@ -206,7 +206,7 @@ Then $0\leq\gamma\leq1$ and $\gamma c(a)\leq c'(a)$ for every label; an old zero
 \textbf{Support-only forward repair.} Retain a table only when all its incoming non-self-loop label costs match its saved offer; rebuild it otherwise, and always forward the residual. The same ordered induction proves equality to a fresh rebuild. It is a deliberately cheaper, less selective exact baseline, not the unsound policy of considering only the original changed action.
 
 \section{Reproducible Checks and Timing Protocol}
-All experimental inputs are algorithmically generated for this study. No IPC dataset, demonstration, external planner code, training, model API, private data, or hardware service was used. Python 3.13.5 and its standard library were used for the retained run. The production implementation uses arbitrary-precision integer distances and residuals and deliberately rejects floats, Boolean values as costs, negative costs, wrong cost-vector length, and unreachable abstract vertices. The proofs permit finite nonnegative real costs. A separate checker uses exact \texttt{Fraction} arithmetic, imports none of the candidate implementation, and exercises fractional ties and reuse certificates without floating-point tolerances; it is regression evidence, not a proof for all reals.
+All experimental inputs are algorithmically generated for this study. No IPC dataset, demonstration, external planner code, training, model API, private data, or hardware service was used. Python 3.13.5 and its standard library were used for the retained run. The production implementation uses arbitrary-precision integer distances and residuals and deliberately rejects floats, Boolean values as costs, negative costs, wrong cost-vector length, and unreachable abstract vertices. The proofs permit finite nonnegative real costs. A separate checker uses exact \codeidentifier{Fraction} arithmetic, imports none of the candidate implementation, and exercises fractional ties and reuse certificates without floating-point tolerances; it is regression evidence, not a proof for all reals.
 
 \textbf{Independent oracle.} The oracle performs synchronous Bellman--Ford relaxations, at most $|V|-1$ rounds, with its own label-major saturation loop and ordered residual subtraction. It does not import the candidate's Dijkstra, saturation, or reuse functions. It shares the input graph representation and synthetic task generators; the comparison is a finite algorithmic cross-check, not a mechanized proof.
 

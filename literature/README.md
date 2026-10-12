@@ -1,7 +1,7 @@
 # Bibliography provenance
 
 `references.bib` is the canonical 65-work bibliography. `../literature_matrix.csv`
-retains the earlier literature audit's scope, reading depth, verification sources
+records the literature audit's scope, reading depth, verification sources
 and edition notes. `../external_resources.csv`
 mirrors the scholarly URLs for provenance accounting.
 
@@ -33,5 +33,14 @@ and proceedings identity agree, and the matrix states which pagination is retain
 
 `main-citations.txt` lists the 52 main-text selections; the essential supplement
 cites 2 works. `../tests/check_bibliography.py` checks parsed bibliography identity
-and follows actual publisher inputs when available. Earlier reading-depth records
-are not upgraded by this bibliographic/targeted-context update.
+and follows actual publisher inputs when available. The reading-depth fields
+state the extent of the documented source checks; citation selection and
+metadata matching do not establish full-text claim support.
+
+In `../literature_matrix.csv`, `cited_in_main` and `cited_in_supplement` refer
+to the current publisher main note and publisher supplement (52 and 2 records).
+`cited_in_artifact_audit` refers to the separate 65-source artifact literature
+audit. Citation flags
+record document inclusion, not reading depth or full-text support. The source
+tiers, access dates, edition notes and reading-depth fields retain their
+recorded evidence scope.

@@ -1,0 +1,42 @@
+\documentclass[preprint,11pt]{elsarticle}
+\journal{Artificial Intelligence}
+\usepackage[hyphens]{url}
+\urlstyle{rm}
+\def\UrlFont{\rm}
+\usepackage{amsmath,amssymb,booktabs,graphicx,pdflscape}
+\frenchspacing
+\setcounter{secnumdepth}{0}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\usepackage{etoolbox}
+\patchcmd{\emailauthor}{\ttfamily}{\rmfamily}{}{\PackageError{manuscript}{Email font override failed}{}}
+\patchcmd{\urlauthor}{\ttfamily}{\rmfamily}{}{\PackageError{manuscript}{URL font override failed}{}}
+\DeclareUrlCommand\path{\urlstyle{rm}}
+\newcommand{\codeidentifier}[1]{\textit{#1}}
+\begin{document}
+\begin{frontmatter}
+\title{Supplement: Cost Decreases Trigger Tight Fibonacci Cascades\\in Saturated Cost Partitioning}
+\author[xjtlu]{Haoyi Zhang\fnref{equal}}
+\ead{hyeliozhang@gmail.com}
+\author[ntu]{Huaijin Ran\fnref{equal}}
+\ead{huaijin003@e.ntu.edu.sg}
+\author[ntu]{Yuqiang Sun}
+\ead{yuqiang.sun@ntu.edu.sg}
+\author[ntu]{Jiongchi Yu}
+\ead{jiongchiyu@acm.org}
+\author[ntu]{Yang Liu\corref{cor}}
+\ead{yangliu@ntu.edu.sg}
+\address[xjtlu]{Xi'an Jiaotong-Liverpool University, Suzhou, China}
+\address[ntu]{Nanyang Technological University, Singapore}
+\fntext[equal]{Haoyi Zhang and Huaijin Ran contributed equally to this work.}
+\cortext[cor]{Corresponding author: Yang Liu.}
+\begin{abstract}
+This artifact presents a finite labelled model with fixed goal-reachable abstractions, a fixed order, and finite nonnegative label costs. It gives the saturation invariant, path-relay proof, tight support-two Fibonacci bound and matching construction, exact table-reuse criterion, ordered-repair proof, and counterexamples. Exact integer and rational checks cover implementation behavior and concrete witnesses; the evaluation protocol documents the bounded synthetic measurements. A 65-source literature audit records each work's role, comparison boundary, verification source, and reading depth: 15 substantive full-paper or theorem/algorithm passes and 50 bibliographic and relevant-passage checks.
+\end{abstract}
+\end{frontmatter}
+\input{results}
+\input{self-loop-elision}
+\input{literature}
+\bibliographystyle{elsarticle-harv}
+\bibliography{../literature/references}
+\end{document}

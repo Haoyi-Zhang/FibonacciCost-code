@@ -1,0 +1,20 @@
+\section{Self-Loop Elision}
+A self-loop contributes $h(u)-h(u)=0$ to the zero-initialized saturation maximum.
+Preindexing non-self edges preserves allocations, including zero for self-loop-only
+labels; ordered residual induction preserves tables. Full transitions remain
+available.
+
+Windows CPython uses 60 frozen updates, eleven rotating pairs of four arms
+(full and exact updates, each with all-edge and elided kernels), and sixteen
+update/evaluator calls per arm. Indexing and old/reference tables are untimed.
+All 2,640 A* runs match cost, expansions and generated nodes; tables and
+allocations agree. Tests pass for
+2,000 random saturation vectors, 40,095 exhaustive reuse cases and 1,440
+Bellman--Ford sequential comparisons. The artifact retains raw pairs, edge
+counts and CPU affinity. Median ratios span $1.37$--$1.98$
+for full updates, $1.00$--$1.67$ for exact updates. These kernel timings exclude
+search and cannot resolve differences near one; Linux all-edge timings remain
+separate.
+
+These measurements predate the current all-edge prepared-cost implementation;
+they describe the retained historical kernels, not a new timing of the current code.

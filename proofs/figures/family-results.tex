@@ -1,0 +1,30 @@
+\begin{landscape}
+\begin{table}[p]
+\centering
+\begin{tabular}{llrrrrrr}
+\toprule
+Family & Method & Cases & \shortstack[r]{Written\\(\%)} & \shortstack[r]{Update\\(ms)} & \shortstack[r]{Update+A*\\(ms)} & \shortstack[r]{Ratio to\\full} & Expansions\\
+\midrule
+Independent & Full SCP & 24 & 100.0 & 2.513 & 6.71 & 1.000 & 672\\
+ & Exact reuse & 24 & 21.9 & 0.934 & 5.12 & 0.763 & 672\\
+ & Support only & 24 & 37.5 & 0.913 & 4.91 & 0.731 & 672\\
+ & Scaled old & 24 & 0.0 & 0.704 & 633.47 & 94.405 & 123,028\\
+ & New maximum & 24 & 100.0 & 0.836 & 635.54 & 94.712 & 121,576\\
+\midrule
+Coupled & Full SCP & 24 & 100.0 & 8.113 & 32.27 & 1.000 & 2,272\\
+ & Exact reuse & 24 & 22.5 & 2.808 & 27.58 & 0.855 & 2,272\\
+ & Support only & 24 & 75.0 & 5.579 & 29.90 & 0.927 & 2,272\\
+ & Scaled old & 24 & 0.0 & 0.627 & 240.43 & 7.451 & 27,839\\
+ & New maximum & 24 & 100.0 & 2.552 & 152.88 & 4.738 & 15,895\\
+\midrule
+Relay & Full SCP & 12 & 100.0 & 1.019 & 1.97 & 1.000 & 66\\
+ & Exact reuse & 12 & 100.0 & 1.117 & 2.03 & 1.029 & 66\\
+ & Support only & 12 & 100.0 & 0.972 & 1.88 & 0.956 & 66\\
+ & Scaled old & 12 & 0.0 & 0.238 & 105.09 & 53.296 & 13,404\\
+ & New maximum & 12 & 100.0 & 0.291 & 102.10 & 51.783 & 12,585\\
+\bottomrule
+\end{tabular}
+\caption{Primary synthetic campaign by family. Times sum per-instance medians; repetitions are not independent tasks. Ratios use the summed update-plus-search times within a family. Written percentages are weighted by table size. All methods solve every case.}
+\label{tab:families}
+\end{table}
+\end{landscape}
