@@ -10,6 +10,8 @@ Source tiers are deliberately explicit:
 - `publisher_or_doi`: publisher landing page or DOI resolver;
 - `official_proceedings_or_journal`: venue or journal record/PDF;
 - `author_or_institutional_copy`: an author-hosted or university-hosted paper copy;
+- `archived_primary_author_final`: an archived copy linked by the paper's author,
+  with its edition and proof dependencies recorded separately;
 - `institutional_bibliography`: a university repository or author publication record
   used where no stable publisher page was available.
 
@@ -35,9 +37,13 @@ and proceedings identity agree, and the matrix states which pagination is retain
 `main-citations.txt` lists the 52 main-text selections; the essential supplement
 cites 2 works. `../tests/check_bibliography.py` checks parsed bibliography identity
 and follows actual publisher inputs when available. The reading-depth fields
-identify the passages examined for each cited claim. Fifty of the 52 main-text
-works have primary-body passage checks; the Frigioni and Katz--Domshlak journal
-articles currently have metadata or abstract checks. These statuses distinguish
+identify the passages examined for each cited claim. Fifty-one of the 52
+main-text selections have relevant primary-body checks. These include the
+complete 24-page archived author-labelled final draft of Frigioni et al.
+Its fully dynamic result assumes positive edge weights; its omitted coloring
+proof refers to a predecessor not covered by this reading. The author draft
+has not been equated with the 31-page publisher edition. The Katz--Domshlak
+journal article remains at metadata or abstract reading depth. These statuses distinguish
 identity, passage support and whole-source proof review.
 
 In `../literature_matrix.csv`, `cited_in_main` and `cited_in_supplement` refer
