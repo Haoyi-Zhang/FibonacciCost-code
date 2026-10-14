@@ -13,8 +13,9 @@ Source tiers are deliberately explicit:
 - `institutional_bibliography`: a university repository or author publication record
   used where no stable publisher page was available.
 
-`verified` means that the recorded title, authorship, year, venue, and the passage
-used for positioning were checked against the listed source. `version_cross_checked`
+The metadata status `verified` refers to the recorded bibliographic identity.
+Reading depth is recorded separately, with the relevant passage source in the
+verification note. `version_cross_checked`
 means that two legitimate records expose different edition metadata and the selected
 version is stated rather than silently merged.
 
@@ -34,8 +35,10 @@ and proceedings identity agree, and the matrix states which pagination is retain
 `main-citations.txt` lists the 52 main-text selections; the essential supplement
 cites 2 works. `../tests/check_bibliography.py` checks parsed bibliography identity
 and follows actual publisher inputs when available. The reading-depth fields
-state the extent of the documented source checks; citation selection and
-metadata matching do not establish full-text claim support.
+identify the passages examined for each cited claim. Fifty of the 52 main-text
+works have primary-body passage checks; the Frigioni and Katz--Domshlak journal
+articles currently have metadata or abstract checks. These statuses distinguish
+identity, passage support and whole-source proof review.
 
 In `../literature_matrix.csv`, `cited_in_main` and `cited_in_supplement` refer
 to the current publisher main note and publisher supplement (52 and 2 records).
