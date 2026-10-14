@@ -10,7 +10,7 @@ Source tiers are deliberately explicit:
 - `publisher_or_doi`: publisher landing page or DOI resolver;
 - `official_proceedings_or_journal`: venue or journal record/PDF;
 - `author_or_institutional_copy`: an author-hosted or university-hosted paper copy;
-- `archived_primary_author_final`: an archived copy linked by the paper's author,
+- `archived_primary_author_final_manuscript`: an archived copy linked by the paper's author,
   with its edition and proof dependencies recorded separately;
 - `institutional_bibliography`: a university repository or author publication record
   used where no stable publisher page was available.
