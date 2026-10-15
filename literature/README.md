@@ -37,13 +37,16 @@ and proceedings identity agree, and the matrix states which pagination is retain
 `main-citations.txt` lists the 52 main-text selections; the essential supplement
 cites 2 works. `../tests/check_bibliography.py` checks parsed bibliography identity
 and follows actual publisher inputs when available. The reading-depth fields
-identify the passages examined for each cited claim. Fifty-one of the 52
-main-text selections have relevant primary-body checks. These include the
+identify the passages examined for each cited claim. Recorded readings include the
 complete 24-page archived author-labelled final draft of Frigioni et al.
 Its fully dynamic result assumes positive edge weights; its omitted coloring
 proof refers to a predecessor not covered by this reading. The author draft
-has not been equated with the 31-page publisher edition. The Katz--Domshlak
-journal article remains at metadata or abstract reading depth. These statuses distinguish
+has not been equated with the 31-page publisher edition. The current
+Katz--Domshlak background clause uses the eight-page 2008 ICAPS original,
+as recorded in the matrix, not the 2010 journal extension. The journal entry
+remains in the bibliography at metadata or abstract reading depth and is not
+cited by the current main note, publisher supplement, or artifact audit.
+These statuses distinguish
 identity, passage support and whole-source proof review.
 
 In `../literature_matrix.csv`, `cited_in_main` and `cited_in_supplement` refer
