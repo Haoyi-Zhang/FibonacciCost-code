@@ -25,6 +25,14 @@ class BibliographyTests(unittest.TestCase):
     def test_canonical_selection(self) -> None:
         gate.check_records(self.entries, self.selected)
 
+    def test_selected_cost_budget_source_is_the_conference_original(self) -> None:
+        self.assertIn('katzdomshlak2008', self.selected)
+        fields=self.entries['katzdomshlak2008']
+        self.assertEqual(fields['entry_type'], 'inproceedings')
+        self.assertEqual(fields['year'], '2008')
+        self.assertEqual(fields['pages'], '174--181')
+        self.assertIn('Additive Composition', fields['title'])
+
     def test_formatting_does_not_lock_bibliography(self) -> None:
         formatted = gate.parse_bib_entries(self.text.replace("\n", "\n    "))
         key = next(k for k, fields in formatted.items() if fields.get("doi"))
